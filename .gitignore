@@ -1,0 +1,75 @@
+# Build directories
+build/
+build-debug/
+cmake-build-*/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+.eggs/
+*.egg
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Linting
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data
+data/raw/
+data/processed/
+data/features/
+data/models/
+*.csv
+*.parquet
+*.h5
+*.hdf5
+*.pkl
+*.joblib
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.venv/
+venv/
+ENV/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Benchmark results
+benchmark_results.json
+*.benchmark
+
+# Compiled extensions
+*.o
+*.a
+*.dylib
+*.dll
