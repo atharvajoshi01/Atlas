@@ -1399,13 +1399,13 @@ def section_overview(sim):
 
     with col1:
         st.markdown(f"""
-        <div class="chart-container">
-            <div class="chart-header">
-                <div class="chart-title">
-                    <div class="icon">📚</div>
-                    Order Book Depth
+        <div style="background: {COLORS['bg_secondary']}; border: 1px solid {COLORS['border']}; border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.2rem;">📚</span>
+                    <span style="font-weight: 600; color: {COLORS['text_primary']};">Order Book Depth</span>
                 </div>
-                <div class="chart-badge">Real-Time</div>
+                <span style="background: {COLORS['accent_primary']}; color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Real-Time</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1414,13 +1414,13 @@ def section_overview(sim):
 
     with col2:
         st.markdown(f"""
-        <div class="chart-container">
-            <div class="chart-header">
-                <div class="chart-title">
-                    <div class="icon">💰</div>
-                    Portfolio Performance
+        <div style="background: {COLORS['bg_secondary']}; border: 1px solid {COLORS['border']}; border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.2rem;">💰</span>
+                    <span style="font-weight: 600; color: {COLORS['text_primary']};">Portfolio Performance</span>
                 </div>
-                <div class="chart-badge">Strategy</div>
+                <span style="background: {COLORS['success']}; color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Strategy</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1430,7 +1430,12 @@ def section_overview(sim):
 
 def section_orderbook(sim):
     """Market insights section."""
-    st.markdown('<div class="section-header">Market Insights <span class="section-badge">Real-Time</span></div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style="font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 700; color: {COLORS['text_primary']}; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+        Market Insights
+        <span style="background: {COLORS['accent_primary']}; color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Real-Time</span>
+    </div>
+    """, unsafe_allow_html=True)
 
     book = sim.get_orderbook()
 
@@ -1485,7 +1490,12 @@ def section_orderbook(sim):
 
 def section_performance(sim):
     """Performance analytics."""
-    st.markdown('<div class="section-header">Your Investment Growth <span class="section-badge">Performance</span></div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style="font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 700; color: {COLORS['text_primary']}; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+        Your Investment Growth
+        <span style="background: {COLORS['success']}; color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Performance</span>
+    </div>
+    """, unsafe_allow_html=True)
 
     perf = sim.get_performance()
 
@@ -1518,7 +1528,12 @@ def section_performance(sim):
 
 def section_system(sim):
     """System metrics."""
-    st.markdown('<div class="section-header">Speed & Technology <span class="section-badge">Under the Hood</span></div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style="font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 700; color: {COLORS['text_primary']}; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
+        Speed & Technology
+        <span style="background: {COLORS['info']}; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Under the Hood</span>
+    </div>
+    """, unsafe_allow_html=True)
 
     cols = st.columns(4)
     with cols[0]:
@@ -1674,15 +1689,50 @@ def main():
 
         st.markdown("---")
 
-        # Contact section
+        # Get in Touch section
         st.markdown(f"""
         <div style="text-align: center; padding: 12px;">
             <div style="color: {COLORS['text_muted']}; font-size: 0.8rem; margin-bottom: 8px;">Need help?</div>
-            <a href="mailto:atharvajoshi2024@gmail.com?subject=Atlas%20Dashboard%20Inquiry" style="color: {COLORS['accent_primary']}; text-decoration: none; font-size: 0.85rem;">
-                ✉️ Contact Us
-            </a>
         </div>
         """, unsafe_allow_html=True)
+
+        # Initialize session state for contact form
+        if 'show_contact' not in st.session_state:
+            st.session_state.show_contact = False
+
+        if st.button("✉️ Get in Touch", use_container_width=True):
+            st.session_state.show_contact = not st.session_state.show_contact
+
+        if st.session_state.show_contact:
+            st.markdown(f"""
+            <div style="background: {COLORS['bg_tertiary']}; border-radius: 12px; padding: 16px; margin-top: 12px; border: 1px solid {COLORS['border']};">
+                <div style="color: {COLORS['accent_primary']}; font-weight: 600; margin-bottom: 12px;">Send us a message</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            with st.form("contact_form", clear_on_submit=True):
+                user_email = st.text_input("Your Email", placeholder="your@email.com")
+                user_message = st.text_area("Message", placeholder="How can we help you?", height=100)
+                submitted = st.form_submit_button("Send Message", use_container_width=True)
+
+                if submitted:
+                    if user_email and user_message:
+                        # Create mailto link with pre-filled content
+                        import urllib.parse
+                        subject = urllib.parse.quote("Atlas Dashboard - Message from " + user_email)
+                        body = urllib.parse.quote(f"From: {user_email}\n\nMessage:\n{user_message}")
+                        mailto_link = f"mailto:atharvajoshi2024@gmail.com?subject={subject}&body={body}"
+
+                        st.markdown(f"""
+                        <div style="text-align: center; padding: 12px;">
+                            <div style="color: {COLORS['success']}; margin-bottom: 8px;">✓ Message ready!</div>
+                            <a href="{mailto_link}" target="_blank" style="background: {COLORS['accent_primary']}; color: #000; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                                Open Email Client
+                            </a>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.warning("Please fill in both fields")
 
     # Main content
     render_header()
