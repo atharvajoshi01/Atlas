@@ -1455,7 +1455,7 @@ def section_overview(sim):
 
 def section_orderbook(sim):
     """Order book section."""
-    st.markdown('<div class="section-header">Order Book <span class="section-badge">Real-Time</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Live Market Prices <span class="section-badge">Real-Time</span></div>', unsafe_allow_html=True)
 
     book = sim.get_orderbook()
 
@@ -1476,7 +1476,7 @@ def section_orderbook(sim):
 
 def section_performance(sim):
     """Performance analytics."""
-    st.markdown('<div class="section-header">Performance Analytics <span class="section-badge">Strategy</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Your Investment Growth <span class="section-badge">Performance</span></div>', unsafe_allow_html=True)
 
     perf = sim.get_performance()
 
@@ -1509,7 +1509,7 @@ def section_performance(sim):
 
 def section_system(sim):
     """System metrics."""
-    st.markdown('<div class="section-header">System Metrics <span class="section-badge">Engine</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Speed & Technology <span class="section-badge">Under the Hood</span></div>', unsafe_allow_html=True)
 
     cols = st.columns(4)
     with cols[0]:
@@ -1544,12 +1544,59 @@ def section_system(sim):
 
 
 # =============================================================================
+# WELCOME HERO SECTION
+# =============================================================================
+def render_welcome():
+    """Render welcome hero section for new users."""
+    st.markdown(f"""
+    <div style="background: linear-gradient(135deg, {COLORS['bg_secondary']} 0%, {COLORS['bg_tertiary']} 100%); border-radius: 20px; padding: 40px; margin-bottom: 30px; border: 1px solid {COLORS['border']}; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 16px;">👋</div>
+        <h1 style="font-family: 'Orbitron', sans-serif; font-size: 2rem; margin-bottom: 12px; background: {COLORS['accent_gradient']}; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Welcome to Atlas
+        </h1>
+        <p style="color: {COLORS['text_secondary']}; font-size: 1.1rem; max-width: 600px; margin: 0 auto 24px auto; line-height: 1.6;">
+            Your intelligent trading companion. Watch live market data, track performance, and let AI help you make smarter decisions.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <div style="background: {COLORS['bg_primary']}; padding: 16px 24px; border-radius: 12px; border: 1px solid {COLORS['border']};">
+                <div style="color: {COLORS['accent_primary']}; font-size: 1.5rem; font-weight: 700;">16ns</div>
+                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">Lightning Fast</div>
+            </div>
+            <div style="background: {COLORS['bg_primary']}; padding: 16px 24px; border-radius: 12px; border: 1px solid {COLORS['border']};">
+                <div style="color: {COLORS['success']}; font-size: 1.5rem; font-weight: 700;">94.2%</div>
+                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">AI Accuracy</div>
+            </div>
+            <div style="background: {COLORS['bg_primary']}; padding: 16px 24px; border-radius: 12px; border: 1px solid {COLORS['border']};">
+                <div style="color: {COLORS['info']}; font-size: 1.5rem; font-weight: 700;">24/7</div>
+                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">Always On</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def render_info_card(title, description, icon="ℹ️"):
+    """Render an info card explaining a concept."""
+    st.markdown(f"""
+    <div style="background: {COLORS['bg_tertiary']}; border-radius: 12px; padding: 16px; margin-bottom: 16px; border-left: 3px solid {COLORS['accent_primary']};">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 1.2rem;">{icon}</span>
+            <span style="color: {COLORS['text_primary']}; font-weight: 600;">{title}</span>
+        </div>
+        <p style="color: {COLORS['text_secondary']}; font-size: 0.85rem; margin: 0; line-height: 1.5;">
+            {description}
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# =============================================================================
 # MAIN
 # =============================================================================
 def main():
     sim = get_simulator()
 
-    # Sidebar
+    # Sidebar - User Friendly
     with st.sidebar:
         st.markdown(f"""
         <div style="text-align: center; padding: 20px 0;">
@@ -1557,50 +1604,94 @@ def main():
                 ATLAS
             </div>
             <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-top: 4px;">
-                Quantum Engine v2.0
+                Smart Trading Platform
             </div>
         </div>
         """, unsafe_allow_html=True)
 
+        # User-friendly navigation
         page = st.radio(
-            "Navigation",
-            ["🏠 Overview", "📚 Order Book", "📈 Performance", "⚡ System"],
+            "Navigate",
+            ["🏠 Home", "💹 Live Market", "📊 My Returns", "⚙️ How It Works"],
             label_visibility="collapsed"
         )
 
         st.markdown("---")
 
-        # Live stats
+        # Live stats with friendly labels
         book = sim.get_orderbook()
-        st.metric("BTC Price", f"${book['mid']:,.2f}", f"{np.random.uniform(-2, 3):.2f}%")
-        st.metric("Spread", f"${book['spread']:.2f}")
-        st.metric("Engine Latency", "16 ns")
+
+        st.markdown(f"""
+        <div style="color: {COLORS['text_muted']}; font-size: 0.75rem; margin-bottom: 4px;">LIVE BITCOIN PRICE</div>
+        """, unsafe_allow_html=True)
+        st.metric("", f"${book['mid']:,.2f}", f"{np.random.uniform(-2, 3):.2f}%")
+
+        st.markdown(f"""
+        <div style="color: {COLORS['text_muted']}; font-size: 0.75rem; margin-bottom: 4px; margin-top: 16px;">BUY/SELL GAP</div>
+        """, unsafe_allow_html=True)
+        st.metric("", f"${book['spread']:.2f}", help="The difference between buying and selling price")
 
         st.markdown("---")
 
+        # Friendly AI status
         st.markdown(f"""
-        <div style="background: {COLORS['bg_tertiary']}; border-radius: 12px; padding: 16px;">
-            <div style="color: {COLORS['accent_primary']}; font-weight: 600; margin-bottom: 8px;">
-                🤖 AI Status
+        <div style="background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(255,107,0,0.1)); border-radius: 12px; padding: 16px;">
+            <div style="color: {COLORS['text_primary']}; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 1.2rem;">🤖</span> AI Assistant
             </div>
-            <div style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">
-                Predictions: <span style="color: {COLORS['success']};">Active</span><br>
-                Accuracy: <span style="color: {COLORS['accent_primary']};">94.2%</span><br>
-                Last Update: <span style="color: {COLORS['text_muted']};">2s ago</span>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">Status</span>
+                <span style="color: {COLORS['success']}; font-size: 0.85rem;">● Active</span>
             </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">Accuracy</span>
+                <span style="color: {COLORS['accent_primary']}; font-size: 0.85rem; font-weight: 600;">94.2%</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">Updated</span>
+                <span style="color: {COLORS['text_muted']}; font-size: 0.85rem;">Just now</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("---")
+
+        # Help section
+        st.markdown(f"""
+        <div style="text-align: center; padding: 12px;">
+            <div style="color: {COLORS['text_muted']}; font-size: 0.8rem; margin-bottom: 8px;">Need help?</div>
+            <a href="https://github.com/atharvajoshi01/Atlas" target="_blank" style="color: {COLORS['accent_primary']}; text-decoration: none; font-size: 0.85rem;">
+                📖 View Documentation
+            </a>
         </div>
         """, unsafe_allow_html=True)
 
     # Main content
     render_header()
 
-    if "Overview" in page:
+    if "Home" in page:
+        render_welcome()
         section_overview(sim)
-    elif "Order Book" in page:
+    elif "Live Market" in page:
+        render_info_card(
+            "What is the Order Book?",
+            "This shows all current buy and sell orders in the market. Green prices are people wanting to buy, red prices are people wanting to sell. The closer they are, the more active the market!",
+            "📚"
+        )
         section_orderbook(sim)
-    elif "Performance" in page:
+    elif "My Returns" in page:
+        render_info_card(
+            "Understanding Your Performance",
+            "Track how your investments are doing over time. Green means you're making money, red means losing. The charts show your journey - every investor has ups and downs!",
+            "📈"
+        )
         section_performance(sim)
-    elif "System" in page:
+    elif "How It Works" in page:
+        render_info_card(
+            "The Technology Behind Atlas",
+            "Atlas uses cutting-edge technology to process millions of trades per second. These benchmarks show how fast our system responds - measured in nanoseconds (billionths of a second)!",
+            "⚡"
+        )
         section_system(sim)
 
 
