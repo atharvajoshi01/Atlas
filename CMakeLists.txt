@@ -15,10 +15,17 @@ option(ATLAS_BUILD_BENCHMARKS "Build benchmarks" ON)
 option(ATLAS_BUILD_PYTHON "Build Python bindings" ON)
 option(ATLAS_ENABLE_SANITIZERS "Enable sanitizers in debug" OFF)
 
+# Option to disable march=native (for CI)
+option(ATLAS_NATIVE_ARCH "Enable -march=native optimization" ON)
+
 # Compiler flags
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -DNDEBUG -flto")
+    if(ATLAS_NATIVE_ARCH)
+        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -DNDEBUG -flto")
+    else()
+        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+    endif()
     set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 
     if(ATLAS_ENABLE_SANITIZERS)
