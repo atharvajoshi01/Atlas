@@ -4,20 +4,20 @@ on:
   push:
     branches: [main]
   pull_request:
-      branches: [main]
+    branches: [main]
 
 jobs:
   cpp-build-test:
-    name: C++ Build & Test
-    runs-on: ubuntu-latest
-          
+    name: C++ Build &amp; Test
+    runs-on: ubuntu-22.04
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build
+          sudo apt-get install -y cmake ninja-build g++-12
 
       - name: Configure
         run: |
@@ -33,7 +33,7 @@ jobs:
         run: cmake --build build --parallel
 
       - name: Run Tests
-        run: ctest --test-dir build --output-on-failure
+        run: ./build/atlas_tests
 
   cpp-benchmark:
     name: Benchmark
@@ -58,6 +58,11 @@ jobs:
             -DATLAS_BUILD_BENCHMARKS=ON \
             -DATLAS_BUILD_PYTHON=OFF
           cmake --build build --parallel
+
+      - name: Run Benchmarks
+        run: ./build/atlas_benchmarks --benchmark_format=console
+
+
 
       - name: Run Benchmarks
         run: ./build/atlas_benchmarks --benchmark_format=console
