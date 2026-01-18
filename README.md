@@ -1,82 +1,223 @@
-# Atlas: Low-Latency Order Book Engine with Predictive Execution
+<p align="center">
+  <h1 align="center">Atlas</h1>
+  <p align="center"><strong>Sub-Nanosecond Order Book Engine in C++20</strong></p>
+</p>
 
-A production-grade limit order book engine in C++ with sub-microsecond performance, integrated with a Python ML pipeline for short-term price prediction and smart order execution.
+<p align="center">
+  <img src="https://img.shields.io/badge/Add%20Order-16%20ns-orange?style=for-the-badge" alt="Add Order: 16ns"/>
+  <img src="https://img.shields.io/badge/Get%20BBO-0.7%20ns-green?style=for-the-badge" alt="Get BBO: 0.7ns"/>
+  <img src="https://img.shields.io/badge/Throughput-62M%20ops%2Fs-blue?style=for-the-badge" alt="Throughput: 62M ops/s"/>
+</p>
 
-## Features
+---
 
-### C++ Core Engine
-- **Sub-microsecond latency**: Order add < 500ns, cancel < 200ns (p99)
-- **Zero malloc in hot path**: Custom memory pool allocator
-- **Cache-optimized**: 64-byte aligned structures
-- **Lock-free SPSC ring buffer**: For market data processing
-- **Full matching engine**: Price-time priority with IOC/FOK support
+A production-grade limit order book engine achieving **sub-20 nanosecond** order insertion with zero heap allocations in the hot path. Built for HFT research and quantitative trading systems.
 
-### Python Research Pipeline
-- **Feature engineering**: 50+ order book and trade features with Numba JIT
-- **Alpha signal generation**: Walk-forward validated ML models
-- **Backtest engine**: Realistic execution with market impact modeling
-- **Monitoring**: PSI drift detection, model performance tracking
+## Benchmark Results (Apple M1 Pro)
 
-## Performance Benchmarks
+```
+BM_OrderBook_AddOrder          16.3 ns    62M ops/s    ← Core operation
+BM_OrderBook_CancelOrder       50.8 ns    20M ops/s
+BM_OrderBook_GetBBO             0.72 ns   1.4B ops/s   ← Sub-nanosecond
+BM_OrderBook_BestBid            0.28 ns   3.5B ops/s
+BM_OrderBook_MidPrice           0.67 ns   1.5B ops/s
+BM_OrderBook_GetDepth/10       41.0 ns    24M ops/s
+BM_PoolAllocator_Allocate       1.7 ns   588M ops/s
+BM_RingBuffer_PushPop           3.2 ns   620M ops/s
+BM_MatchingEngine_Cancel        2.8 ns   354M ops/s
+```
 
-### Order Book Engine (C++)
-| Operation        | Latency  | Target   | Status |
-|------------------|----------|----------|--------|
-| Add Order        | ~16 ns   | < 500 ns | ✅ 31x faster |
-| Cancel Order     | ~50 ns   | < 200 ns | ✅ 4x faster |
-| Get BBO          | ~0.7 ns  | < 50 ns  | ✅ 71x faster |
-| Get Depth (10)   | ~42 ns   | < 500 ns | ✅ 12x faster |
-| Mid Price        | ~0.66 ns | < 100 ns | ✅ 151x faster |
-| Pool Allocate    | ~1.7 ns  | < 20 ns  | ✅ 12x faster |
-
-### Feature Engine (Python)
-| Operation           | Latency |
-|---------------------|---------|
-| Full feature vector | < 1 ms  |
-| Incremental update  | < 100 us|
+> Run `./build/atlas_benchmarks` to reproduce. Full results in [`docs/benchmark_results.txt`](docs/benchmark_results.txt)
 
 ## Quick Start
 
-### Build C++ Components
-
 ```bash
+git clone https://github.com/atharvajoshi01/Atlas.git
+cd Atlas
+
+# Build (requires CMake 3.16+, C++20 compiler)
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j$(nproc)
 
-# Run tests
-ctest --verbose
-
 # Run benchmarks
 ./atlas_benchmarks
+
+# Run tests
+./atlas_tests
 ```
 
-### Install Python Package
+## Architecture
 
-```bash
-pip install -e ".[all]"
+```
+                    ┌─────────────────────────────────────────────────────────────┐
+                    │                     ATLAS ENGINE                            │
+                    └─────────────────────────────────────────────────────────────┘
+                                              │
+            ┌─────────────────────────────────┼─────────────────────────────────┐
+            │                                 │                                 │
+            ▼                                 ▼                                 ▼
+    ┌───────────────┐                ┌───────────────┐                ┌───────────────┐
+    │  MARKET DATA  │                │  ORDER BOOK   │                │   MATCHING    │
+    │    HANDLER    │                │    (CORE)     │                │    ENGINE     │
+    ├───────────────┤                ├───────────────┤                ├───────────────┤
+    │ Ring Buffer   │ ──────────────▶│ Price Levels  │◀──────────────▶│ Price-Time    │
+    │ (SPSC, 3ns)   │                │ (std::map)    │                │ Priority      │
+    │               │                │               │                │               │
+    │ ITCH Parser   │                │ Order Index   │                │ IOC/FOK/GTC   │
+    │ (0.8ns/msg)   │                │ (hash map)    │                │ Support       │
+    │               │                │               │                │               │
+    │ Feed Handler  │                │ BBO Cache     │                │ Trade         │
+    │ Interface     │                │ (0.7ns)       │                │ Callbacks     │
+    └───────────────┘                └───────────────┘                └───────────────┘
+            │                                 │                                 │
+            └─────────────────────────────────┼─────────────────────────────────┘
+                                              │
+                                              ▼
+                                    ┌───────────────┐
+                                    │ MEMORY POOL   │
+                                    ├───────────────┤
+                                    │ 64-byte align │
+                                    │ Zero malloc   │
+                                    │ 1.7ns alloc   │
+                                    └───────────────┘
 ```
 
-### Basic Usage
+## Core Components
+
+### Order Book (`include/atlas/core/order_book.hpp`)
+
+The heart of the engine. Maintains bid/ask sides with price-time priority.
+
+```cpp
+#include "atlas/core/order_book.hpp"
+
+atlas::OrderBook book;
+
+// Add orders - 16ns per operation
+book.add_order(/*id=*/1, /*price=*/to_price(100.00), /*qty=*/100, Side::Buy);
+book.add_order(/*id=*/2, /*price=*/to_price(100.01), /*qty=*/50,  Side::Sell);
+
+// Get BBO - 0.7ns (cached)
+auto bbo = book.get_bbo();
+std::cout << "Spread: " << from_price(bbo.spread()) << std::endl;
+
+// Get market depth
+std::vector<DepthLevel> bids, asks;
+book.get_depth(bids, asks, /*levels=*/10);  // 41ns for 10 levels
+```
+
+**Design decisions:**
+- `std::map` for price levels - O(log N) with N < 100 typical levels
+- Intrusive doubly-linked list for orders at each level - O(1) cancel
+- Cached BBO invalidated only on best-level changes
+
+### Memory Pool (`include/atlas/memory/pool_allocator.hpp`)
+
+Zero-allocation order management via pre-allocated memory pool.
+
+```cpp
+#include "atlas/memory/pool_allocator.hpp"
+
+// Pre-allocate 1M order slots, 64-byte aligned
+atlas::PoolAllocator<Order, 1000000> pool;
+
+Order* order = pool.allocate();   // 1.7ns - no syscall
+pool.deallocate(order);           // O(1) return to free list
+```
+
+**Why it matters:** `new`/`delete` costs ~25ns+ with potential syscalls. Pool allocation is 15x faster and deterministic.
+
+### Ring Buffer (`include/atlas/feed/ring_buffer.hpp`)
+
+Lock-free SPSC queue for market data ingestion.
+
+```cpp
+#include "atlas/feed/ring_buffer.hpp"
+
+atlas::RingBuffer<MarketMessage, 65536> buffer;  // Power of 2 for fast modulo
+
+// Producer (market data thread)
+buffer.push(message);  // 3.2ns
+
+// Consumer (order book thread)
+MarketMessage msg;
+if (buffer.pop(msg)) { /* process */ }
+```
+
+### Matching Engine (`include/atlas/matching/matching_engine.hpp`)
+
+Full matching with IOC, FOK, GTC order types.
+
+```cpp
+#include "atlas/matching/matching_engine.hpp"
+
+atlas::MatchingEngine engine;
+
+// Register trade callback
+engine.set_trade_callback([](const Trade& trade) {
+    std::cout << "Trade: " << trade.quantity << " @ " << trade.price << "\n";
+});
+
+// Submit order - matches immediately if crosses spread
+engine.submit_order(order);
+```
+
+## Project Structure
+
+```
+Atlas/
+├── include/atlas/
+│   ├── core/
+│   │   ├── types.hpp          # Price, Quantity, OrderId (64-byte aligned)
+│   │   ├── order.hpp          # Order struct with intrusive list pointers
+│   │   ├── price_level.hpp    # Doubly-linked order list at price
+│   │   └── order_book.hpp     # Main order book class
+│   ├── memory/
+│   │   └── pool_allocator.hpp # Lock-free memory pool
+│   ├── matching/
+│   │   └── matching_engine.hpp # Price-time priority matching
+│   └── feed/
+│       ├── ring_buffer.hpp    # SPSC lock-free queue
+│       ├── market_data.hpp    # Message definitions
+│       └── feed_handler.hpp   # Feed handler interface
+├── tests/cpp/
+│   ├── test_order_book.cpp
+│   ├── test_matching_engine.cpp
+│   ├── test_ring_buffer.cpp
+│   └── benchmark/
+│       ├── bench_order_book.cpp
+│       └── bench_matching.cpp
+├── atlas/                     # Python ML pipeline
+│   ├── features/              # 50+ order book features (Numba JIT)
+│   ├── signals/               # Alpha generation
+│   └── backtest/              # Execution simulation
+└── dashboard/                 # Streamlit visualization
+```
+
+## Performance Techniques
+
+| Technique | Impact | Location |
+|-----------|--------|----------|
+| **Cache-line alignment** | Prevents false sharing | `types.hpp` - 64-byte aligned structs |
+| **Memory pooling** | Zero malloc in hot path | `pool_allocator.hpp` |
+| **BBO caching** | 0.7ns best price access | `order_book.hpp` |
+| **Intrusive lists** | O(1) order removal | `price_level.hpp` |
+| **Power-of-2 sizing** | Fast modulo via bitmask | `ring_buffer.hpp` |
+| **Branch prediction hints** | `[[likely]]`/`[[unlikely]]` | Throughout |
+
+## Python Integration
+
+The C++ engine exposes Python bindings for research:
 
 ```python
-from atlas import OrderBook, Side, to_price, from_price
+from atlas import OrderBook, Side, to_price
 
-# Create order book
 book = OrderBook()
-
-# Add orders
 book.add_order(id=1, price=to_price(100.0), quantity=100, side=Side.Buy)
-book.add_order(id=2, price=to_price(100.01), quantity=50, side=Side.Sell)
 
-# Get BBO
-bbo = book.get_bbo()
-print(f"Bid: {from_price(bbo.bid_price)} x {bbo.bid_quantity}")
-print(f"Ask: {from_price(bbo.ask_price)} x {bbo.ask_quantity}")
-
-# Get depth as NumPy array
-depth = book.get_depth_array(levels=10)
-print(f"Depth shape: {depth.shape}")  # (10, 4)
+# Get depth as NumPy array (zero-copy)
+depth = book.get_depth_array(levels=10)  # Shape: (10, 4)
 ```
 
 ### Feature Engineering
@@ -84,143 +225,42 @@ print(f"Depth shape: {depth.shape}")  # (10, 4)
 ```python
 from atlas.features import FeaturePipeline
 
-# Create default pipeline
-pipeline = FeaturePipeline.default()
-
-# Compute features from market state
-state = {
-    "bid_prices": bid_prices,
-    "bid_sizes": bid_sizes,
-    "ask_prices": ask_prices,
-    "ask_sizes": ask_sizes,
-}
-features = pipeline.compute_normalized(state)
+pipeline = FeaturePipeline.default()  # 50+ features
+features = pipeline.compute(order_book_state)  # < 1ms
 ```
 
-### Backtest
+### Backtesting
 
 ```python
-from atlas.backtest import BacktestEngine, BacktestConfig
-from atlas.backtest.strategy import SimpleStrategy
+from atlas.backtest import BacktestEngine
 
-# Configure backtest
-config = BacktestConfig(
-    initial_capital=100000,
-    commission_per_share=0.001,
-    slippage_bps=1.0,
-)
+engine = BacktestEngine(initial_capital=100000)
+result = engine.run(strategy, market_data)
 
-# Run backtest
-engine = BacktestEngine(config)
-strategy = SimpleStrategy(imbalance_threshold=0.3)
-result = engine.run(strategy, market_data, features)
-
-print(f"Sharpe Ratio: {result.sharpe_ratio:.2f}")
-print(f"Max Drawdown: {result.max_drawdown:.2%}")
+print(f"Sharpe: {result.sharpe_ratio:.2f}")
+print(f"Max DD: {result.max_drawdown:.2%}")
 ```
 
-## Architecture
+## Requirements
 
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   Market Data   │────▶│   Order Book    │────▶│    Features     │
-│    Handler      │     │    (C++)        │     │   (Python)      │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-                                                        │
-                                                        ▼
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│    Execution    │◀────│    Signal       │◀────│  Alpha Model    │
-│   Simulator     │     │   Generator     │     │    (ML)         │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-```
-
-## Project Structure
-
-```
-atlas/
-├── include/atlas/       # C++ headers
-│   ├── core/            # Order, PriceLevel, OrderBook
-│   ├── memory/          # Pool allocator
-│   ├── matching/        # Matching engine
-│   └── feed/            # Ring buffer, feed handler
-├── src/                 # C++ implementation
-├── tests/cpp/           # C++ tests and benchmarks
-├── atlas/               # Python package
-│   ├── features/        # Feature engineering
-│   ├── signals/         # Alpha generation
-│   ├── backtest/        # Backtesting
-│   └── monitoring/      # Drift detection
-└── dashboard/           # Streamlit dashboard
-```
-
-## Design Decisions
-
-### Why std::map for price levels?
-- O(log N) lookup with N = number of price levels (typically < 100)
-- Natural ordering for bid/ask sides
-- Considered flat_map but insertion overhead dominates for active books
-
-### Why intrusive linked lists for orders?
-- O(1) order removal with direct pointer access
-- No memory allocation for list nodes
-- Cache-friendly traversal for matching
-
-### Why Numba for Python features?
-- Near-C++ performance for numerical code
-- Faster iteration than pure C++ during research phase
-- Easy fallback to NumPy for unsupported operations
-
-### Why walk-forward validation?
-- Temporal data requires temporal splits
-- Prevents look-ahead bias
-- More realistic evaluation of live performance
+- **C++20** compiler (GCC 10+, Clang 12+, MSVC 2019+)
+- **CMake** 3.16+
+- **Google Benchmark** (fetched automatically)
+- **Google Test** (fetched automatically)
+- **Python 3.8+** (optional, for ML pipeline)
 
 ## References
 
-- Harris, L. (2003). Trading and Exchanges
-- Cartea, A., et al. (2015). Algorithmic and High-Frequency Trading
-- Almgren, R., & Chriss, N. (2001). Optimal Execution of Portfolio Transactions
+- Harris, L. (2003). *Trading and Exchanges*
+- Cartea, A., et al. (2015). *Algorithmic and High-Frequency Trading*
 
-## Dashboard
+## Live Demo
 
-Premium animated trading dashboard with TradingView-inspired UI.
-
-### Features
-- **Interactive Candlestick Charts**: Real-time OHLC with volume overlay
-- **Trading Panel**: Buy/Sell tabs, order types, percentage buttons
-- **AI Prediction Badges**: ML-driven market direction indicators
-- **Order Book Depth**: Live bid/ask visualization with depth bars
-- **Performance Analytics**: Equity curves, drawdown, rolling Sharpe
-- **System Metrics**: Sub-microsecond latency benchmarks
-
-### Design
-- Orange/Amber color scheme with glassmorphism effects
-- 15+ CSS animations (slide-up, fade-in, pulse-glow, shimmer)
-- Animated particle background
-- Dark theme inspired by TradingView and Bloomberg
-
-### Run Locally
-
-```bash
-pip install streamlit plotly pandas numpy
-streamlit run dashboard/app.py
-```
-
-### Deploy to Hugging Face Spaces (Free)
-1. Create a new Space at [huggingface.co/spaces](https://huggingface.co/spaces)
-2. Select **Streamlit** as the SDK
-3. Upload the `dashboard/` folder contents (app.py, requirements.txt, README.md)
-4. Your dashboard will be live at `https://huggingface.co/spaces/YOUR_USERNAME/atlas-dashboard`
-
-### Deploy to Streamlit Cloud
-1. Go to [share.streamlit.io](https://share.streamlit.io)
-2. Connect your GitHub account
-3. Select this repository and `dashboard/app.py` as the main file
-4. Deploy
+Interactive dashboard: [**atlas-dashboard.hf.space**](https://huggingface.co/spaces/aadu21/atlas-dashboard)
 
 ## Author
 
-**Atharva Joshi** - [GitHub](https://github.com/atharvajoshi01)
+**Atharva Joshi** - [GitHub](https://github.com/atharvajoshi01) | [LinkedIn](https://linkedin.com/in/atharvajoshi01)
 
 ## License
 

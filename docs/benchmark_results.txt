@@ -1,0 +1,131 @@
+--------------------------------------------------------------------------------------------------
+Benchmark                                        Time             CPU   Iterations UserCounters...
+--------------------------------------------------------------------------------------------------
+BM_OrderBook_AddOrder/1                       16.9 ns         16.4 ns     38350911 items_per_second=61.0064M/s orders=100k
+BM_OrderBook_AddOrder/8                       16.6 ns         16.2 ns     39082565 items_per_second=61.6144M/s orders=100k
+BM_OrderBook_AddOrder/64                      16.5 ns         16.1 ns     39652418 items_per_second=61.9257M/s orders=100k
+BM_OrderBook_AddOrder/512                     16.5 ns         16.1 ns     37918389 items_per_second=62.1153M/s orders=100k
+BM_OrderBook_AddOrder/4096                    17.4 ns         16.5 ns     39985148 items_per_second=60.6387M/s orders=100k
+BM_OrderBook_AddOrder/32768                   16.8 ns         16.1 ns     40184620 items_per_second=61.9396M/s orders=100k
+BM_OrderBook_AddOrder/262144                  16.9 ns         16.2 ns     39060320 items_per_second=61.8153M/s orders=100k
+BM_OrderBook_AddOrder/1048576                 16.7 ns         16.1 ns     40496604 items_per_second=61.9301M/s orders=100k
+BM_OrderBook_CancelOrder/1                    53.4 ns         52.3 ns     13953674 items_per_second=19.1255M/s
+BM_OrderBook_CancelOrder/8                    54.5 ns         52.5 ns     13748674 items_per_second=19.0405M/s
+BM_OrderBook_CancelOrder/64                   54.1 ns         52.8 ns     13830439 items_per_second=18.9281M/s
+BM_OrderBook_CancelOrder/512                  53.1 ns         52.1 ns     13811065 items_per_second=19.1925M/s
+BM_OrderBook_CancelOrder/4096                 53.2 ns         52.2 ns     13837547 items_per_second=19.1474M/s
+BM_OrderBook_CancelOrder/32768                54.3 ns         53.0 ns     13020591 items_per_second=18.8802M/s
+BM_OrderBook_CancelOrder/262144               53.5 ns         52.4 ns     13983499 items_per_second=19.0871M/s
+BM_OrderBook_GetBBO/1                        0.690 ns        0.676 ns   1000000000 items_per_second=1.47857G/s
+BM_OrderBook_GetBBO/8                        0.711 ns        0.690 ns    980035281 items_per_second=1.4491G/s
+BM_OrderBook_GetBBO/64                       0.726 ns        0.698 ns   1000000000 items_per_second=1.4335G/s
+BM_OrderBook_GetBBO/512                      0.696 ns        0.681 ns   1000000000 items_per_second=1.46753G/s
+BM_OrderBook_GetBBO/4096                     0.710 ns        0.693 ns   1000000000 items_per_second=1.44393G/s
+BM_OrderBook_GetBBO/32768                    0.756 ns        0.720 ns    992007256 items_per_second=1.38852G/s
+BM_OrderBook_GetBBO/262144                   0.731 ns        0.707 ns    891129443 items_per_second=1.41392G/s
+BM_OrderBook_GetBBO/1048576                  0.695 ns        0.679 ns   1000000000 items_per_second=1.47352G/s
+BM_OrderBook_BestBid/1                       0.289 ns        0.284 ns   1000000000 items_per_second=3.51636G/s
+BM_OrderBook_BestBid/8                       0.292 ns        0.286 ns   1000000000 items_per_second=3.49106G/s
+BM_OrderBook_BestBid/64                      0.294 ns        0.288 ns   1000000000 items_per_second=3.47665G/s
+BM_OrderBook_BestBid/512                     0.306 ns        0.292 ns   1000000000 items_per_second=3.42015G/s
+BM_OrderBook_BestBid/4096                    0.316 ns        0.301 ns   1000000000 items_per_second=3.32044G/s
+BM_OrderBook_BestBid/32768                   0.292 ns        0.289 ns   1000000000 items_per_second=3.46618G/s
+BM_OrderBook_BestBid/262144                  0.292 ns        0.287 ns   1000000000 items_per_second=3.47891G/s
+BM_OrderBook_BestBid/1048576                 0.290 ns        0.286 ns   1000000000 items_per_second=3.50154G/s
+BM_OrderBook_GetDepth/5                       20.9 ns         20.6 ns     33748439 items_per_second=48.5236M/s
+BM_OrderBook_GetDepth/10                      41.6 ns         40.9 ns     16816009 items_per_second=24.4344M/s
+BM_OrderBook_GetDepth/20                      88.1 ns         86.4 ns      8320358 items_per_second=11.5692M/s
+BM_OrderBook_GetDepth/50                       223 ns          217 ns      3298075 items_per_second=4.59827M/s
+BM_OrderBook_MidPrice/1                      0.705 ns        0.680 ns   1000000000 items_per_second=1.47035G/s
+BM_OrderBook_MidPrice/8                      0.678 ns        0.668 ns   1000000000 items_per_second=1.49696G/s
+BM_OrderBook_MidPrice/64                     0.699 ns        0.678 ns   1000000000 items_per_second=1.47385G/s
+BM_OrderBook_MidPrice/512                    0.714 ns        0.685 ns    974821747 items_per_second=1.46091G/s
+BM_OrderBook_MidPrice/4096                   0.672 ns        0.662 ns   1000000000 items_per_second=1.50994G/s
+BM_OrderBook_MidPrice/32768                  0.678 ns        0.669 ns   1000000000 items_per_second=1.49524G/s
+BM_OrderBook_MidPrice/262144                 0.685 ns        0.672 ns   1000000000 items_per_second=1.48886G/s
+BM_OrderBook_MidPrice/1048576                0.685 ns        0.674 ns   1000000000 items_per_second=1.48271G/s
+BM_OrderBook_VWAP/1                           8.19 ns         7.93 ns     90079656 items_per_second=126.068M/s
+BM_OrderBook_VWAP/8                           7.89 ns         7.76 ns     90969343 items_per_second=128.806M/s
+BM_OrderBook_VWAP/64                          7.75 ns         7.63 ns     87641322 items_per_second=131.06M/s
+BM_OrderBook_VWAP/512                         8.24 ns         8.12 ns     87061428 items_per_second=123.177M/s
+BM_OrderBook_VWAP/4096                        8.09 ns         7.97 ns     93004717 items_per_second=125.534M/s
+BM_OrderBook_VWAP/32768                       8.19 ns         8.00 ns     87732491 items_per_second=125.066M/s
+BM_OrderBook_VWAP/65536                       7.98 ns         7.86 ns     86984616 items_per_second=127.288M/s
+BM_PoolAllocator_Allocate/1                   1.87 ns         1.80 ns    387088925 items_per_second=554.363M/s
+BM_PoolAllocator_Allocate/8                   1.81 ns         1.78 ns    388554300 items_per_second=560.961M/s
+BM_PoolAllocator_Allocate/64                  1.80 ns         1.77 ns    391542678 items_per_second=564.818M/s
+BM_PoolAllocator_Allocate/512                 2.43 ns         1.85 ns    391225374 items_per_second=539.897M/s
+BM_PoolAllocator_Allocate/4096                1.82 ns         1.78 ns    380977261 items_per_second=560.538M/s
+BM_PoolAllocator_Allocate/32768               1.81 ns         1.78 ns    393061896 items_per_second=561.98M/s
+BM_PoolAllocator_Allocate/262144              1.87 ns         1.79 ns    395114132 items_per_second=558.261M/s
+BM_PoolAllocator_Allocate/1048576             1.80 ns         1.77 ns    391731116 items_per_second=563.806M/s
+BM_AtomicPoolAllocator_Allocate/1             9.21 ns         9.03 ns     77745816 items_per_second=110.762M/s
+BM_AtomicPoolAllocator_Allocate/8             9.18 ns         9.01 ns     77136686 items_per_second=110.963M/s
+BM_AtomicPoolAllocator_Allocate/64            9.23 ns         9.07 ns     78602228 items_per_second=110.236M/s
+BM_AtomicPoolAllocator_Allocate/512           9.19 ns         8.99 ns     78596050 items_per_second=111.24M/s
+BM_AtomicPoolAllocator_Allocate/4096          9.20 ns         9.04 ns     77324997 items_per_second=110.643M/s
+BM_AtomicPoolAllocator_Allocate/32768         9.15 ns         8.90 ns     78357624 items_per_second=112.421M/s
+BM_AtomicPoolAllocator_Allocate/262144        9.18 ns         8.97 ns     77593278 items_per_second=111.456M/s
+BM_AtomicPoolAllocator_Allocate/1048576       9.28 ns         9.07 ns     77975315 items_per_second=110.23M/s
+BM_StandardAlloc/1                            19.7 ns         19.4 ns     36150676 items_per_second=51.5966M/s
+BM_StandardAlloc/8                            21.0 ns         19.8 ns     35286349 items_per_second=50.425M/s
+BM_StandardAlloc/64                           19.9 ns         19.4 ns     36423238 items_per_second=51.4831M/s
+BM_StandardAlloc/512                          20.2 ns         19.6 ns     34110235 items_per_second=51.084M/s
+BM_StandardAlloc/4096                         19.6 ns         19.2 ns     35503619 items_per_second=52.0056M/s
+BM_StandardAlloc/32768                        19.8 ns         19.3 ns     36301217 items_per_second=51.7256M/s
+BM_StandardAlloc/262144                       19.7 ns         19.4 ns     36258909 items_per_second=51.6678M/s
+BM_StandardAlloc/1048576                      19.6 ns         19.3 ns     35947578 items_per_second=51.805M/s
+BM_OrderBook_MixedWorkload/1                   273 ns          268 ns      2699263 final_orders=99.993k items_per_second=3.72686M/s
+BM_OrderBook_MixedWorkload/8                   300 ns          289 ns      2697090 final_orders=99.999k items_per_second=3.46103M/s
+BM_OrderBook_MixedWorkload/64                  282 ns          276 ns      2560445 final_orders=99.998k items_per_second=3.62698M/s
+BM_OrderBook_MixedWorkload/512                 285 ns          278 ns      2527687 final_orders=99.999k items_per_second=3.59095M/s
+BM_OrderBook_MixedWorkload/4096                286 ns          279 ns      2528600 final_orders=100k items_per_second=3.5808M/s
+BM_OrderBook_MixedWorkload/32768               285 ns          279 ns      2668771 final_orders=99.999k items_per_second=3.59041M/s
+BM_OrderBook_MixedWorkload/262144              291 ns          284 ns      2543226 final_orders=99.999k items_per_second=3.51643M/s
+BM_MatchingEngine_SubmitNoMatch/1             6.36 ns         6.16 ns    111395789 items_per_second=162.348M/s
+BM_MatchingEngine_SubmitNoMatch/8             6.16 ns         6.05 ns    112417293 items_per_second=165.225M/s
+BM_MatchingEngine_SubmitNoMatch/64            6.56 ns         6.37 ns    113222806 items_per_second=156.912M/s
+BM_MatchingEngine_SubmitNoMatch/512           6.17 ns         6.03 ns    110047320 items_per_second=165.791M/s
+BM_MatchingEngine_SubmitNoMatch/4096          6.51 ns         6.32 ns    113605012 items_per_second=158.242M/s
+BM_MatchingEngine_SubmitNoMatch/32768         6.40 ns         6.24 ns    109386964 items_per_second=160.361M/s
+BM_MatchingEngine_SubmitNoMatch/262144        6.36 ns         6.21 ns    107896481 items_per_second=161.021M/s
+BM_MatchingEngine_SubmitWithMatch/1           14.1 ns         12.6 ns     54901961 items_per_second=79.172M/s
+BM_MatchingEngine_SubmitWithMatch/8           15.5 ns         13.5 ns     54167827 items_per_second=74.0875M/s
+BM_MatchingEngine_SubmitWithMatch/64          15.1 ns         13.3 ns     54615817 items_per_second=75.2829M/s
+BM_MatchingEngine_SubmitWithMatch/512         24.3 ns         17.4 ns     37307069 items_per_second=57.6121M/s
+BM_MatchingEngine_SubmitWithMatch/4096        15.0 ns         12.9 ns     73841999 items_per_second=77.4058M/s
+BM_MatchingEngine_SubmitWithMatch/32768       22.6 ns         17.0 ns     35712646 items_per_second=58.7925M/s
+BM_MatchingEngine_SubmitWithMatch/65536       18.6 ns         14.9 ns     75714147 items_per_second=67.1253M/s
+BM_MatchingEngine_CancelOrder/1               2.90 ns         2.82 ns    245334268 items_per_second=354.847M/s
+BM_MatchingEngine_CancelOrder/8               2.94 ns         2.87 ns    223730807 items_per_second=348.373M/s
+BM_MatchingEngine_CancelOrder/64              2.88 ns         2.82 ns    249410323 items_per_second=355.159M/s
+BM_MatchingEngine_CancelOrder/512             2.92 ns         2.86 ns    249653160 items_per_second=350.222M/s
+BM_MatchingEngine_CancelOrder/4096            2.86 ns         2.79 ns    232282642 items_per_second=357.991M/s
+BM_MatchingEngine_CancelOrder/32768           2.93 ns         2.84 ns    251448523 items_per_second=351.961M/s
+BM_MatchingEngine_CancelOrder/65536           2.83 ns         2.78 ns    244927379 items_per_second=359.948M/s
+BM_MatchingEngine_ModifyOrder/1                252 ns          245 ns      2898863 items_per_second=4.07509M/s
+BM_MatchingEngine_ModifyOrder/8                259 ns          251 ns      2828363 items_per_second=3.98704M/s
+BM_MatchingEngine_ModifyOrder/64               251 ns          245 ns      2780260 items_per_second=4.07791M/s
+BM_MatchingEngine_ModifyOrder/512              250 ns          245 ns      2768024 items_per_second=4.08902M/s
+BM_MatchingEngine_ModifyOrder/4096             250 ns          244 ns      2887979 items_per_second=4.09347M/s
+BM_MatchingEngine_ModifyOrder/16384            248 ns          242 ns      2842513 items_per_second=4.12845M/s
+BM_RingBuffer_PushPop/1                       3.56 ns         3.35 ns    214989696 items_per_second=596.633M/s
+BM_RingBuffer_PushPop/8                       3.83 ns         3.54 ns    178272768 items_per_second=565.382M/s
+BM_RingBuffer_PushPop/64                      3.39 ns         3.28 ns    208341394 items_per_second=609.239M/s
+BM_RingBuffer_PushPop/512                     3.35 ns         3.26 ns    214579776 items_per_second=613.335M/s
+BM_RingBuffer_PushPop/4096                    3.35 ns         3.27 ns    213561783 items_per_second=612.101M/s
+BM_RingBuffer_PushPop/32768                   3.33 ns         3.25 ns    214553468 items_per_second=615.457M/s
+BM_RingBuffer_PushPop/262144                  3.34 ns         3.25 ns    215869491 items_per_second=615.386M/s
+BM_RingBuffer_PushPop/1048576                 3.33 ns         3.24 ns    209793144 items_per_second=616.626M/s
+BM_RingBuffer_BurstWrite/100                   469 ns          455 ns      1516537 items_per_second=219.629M/s
+BM_RingBuffer_BurstWrite/1000                 4971 ns         4831 ns       146435 items_per_second=206.995M/s
+BM_RingBuffer_BurstWrite/10000               49172 ns        47898 ns        14635 items_per_second=208.778M/s
+BM_MatchingEngine_Simulation                  1.05 ms         1.00 ms          709 items_per_second=9.96689M/s
+BM_L2Message_Parse/1                         0.879 ns        0.848 ns    832639467 items_per_second=1.179G/s
+BM_L2Message_Parse/8                         0.847 ns        0.830 ns    839006616 items_per_second=1.20419G/s
+BM_L2Message_Parse/64                        0.861 ns        0.840 ns    849875554 items_per_second=1.19062G/s
+BM_L2Message_Parse/512                       0.846 ns        0.829 ns    851446851 items_per_second=1.206G/s
+BM_L2Message_Parse/4096                      0.845 ns        0.833 ns    831423040 items_per_second=1.20091G/s
+BM_L2Message_Parse/32768                     0.850 ns        0.834 ns    850329806 items_per_second=1.19972G/s
+BM_L2Message_Parse/262144                    0.845 ns        0.830 ns    838694991 items_per_second=1.20487G/s
+BM_L2Message_Parse/1048576                   0.879 ns        0.848 ns    839832034 items_per_second=1.17868G/s
