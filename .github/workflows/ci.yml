@@ -27,7 +27,7 @@ jobs:
             -DCMAKE_CXX_FLAGS="-O2" \
             -DATLAS_BUILD_TESTS=ON \
             -DATLAS_BUILD_BENCHMARKS=ON \
-            -DATLAS_BUILD_PYTHON=OFF
+            -DATLAS_BUILD_PYTHON=OFF \
             -DATLAS_NATIVE_ARCH=OFF
 
       - name: Build
@@ -57,7 +57,7 @@ jobs:
             -DCMAKE_CXX_FLAGS="-O2" \
             -DATLAS_BUILD_TESTS=OFF \
             -DATLAS_BUILD_BENCHMARKS=ON \
-            -DATLAS_BUILD_PYTHON=OFF
+            -DATLAS_BUILD_PYTHON=OFF \
             -DATLAS_NATIVE_ARCH=OFF
           cmake --build build --parallel
 
