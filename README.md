@@ -4,6 +4,14 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/atharvajoshi01/Atlas/actions/workflows/ci.yml">
+    <img src="https://github.com/atharvajoshi01/Atlas/actions/workflows/ci.yml/badge.svg" alt="CI"/>
+  </a>
+  <img src="https://img.shields.io/badge/C%2B%2B-20-blue?logo=cplusplus" alt="C++20"/>
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"/>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Add%20Order-16%20ns-orange?style=for-the-badge" alt="Add Order: 16ns"/>
   <img src="https://img.shields.io/badge/Get%20BBO-0.7%20ns-green?style=for-the-badge" alt="Get BBO: 0.7ns"/>
   <img src="https://img.shields.io/badge/Throughput-62M%20ops%2Fs-blue?style=for-the-badge" alt="Throughput: 62M ops/s"/>
