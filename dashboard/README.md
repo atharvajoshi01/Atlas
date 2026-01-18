@@ -3,9 +3,7 @@ title: Atlas Trading Dashboard
 emoji: 📈
 colorFrom: orange
 colorTo: amber
-sdk: streamlit
-sdk_version: 1.28.0
-app_file: app.py
+sdk: docker
 pinned: true
 license: mit
 ---
