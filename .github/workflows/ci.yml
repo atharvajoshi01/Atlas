@@ -10,10 +10,6 @@ jobs:
   cpp-build-test:
     name: C++ Build & Test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        compiler: [gcc-12]
-        build_type: [Release]
           
     steps:
       - uses: actions/checkout@v4
@@ -25,11 +21,10 @@ jobs:
 
       - name: Configure
         run: |
-          export CC=gcc-12
-          export CXX=g++-12
           cmake -B build -G Ninja \
+            -DCMAKE_CXX_COMPILER=g++-12 \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_CXX_FLAGS="-O3 -DNDEBUG" \
+            -DCMAKE_CXX_FLAGS="-O2" \
             -DATLAS_BUILD_TESTS=ON \
             -DATLAS_BUILD_BENCHMARKS=ON \
             -DATLAS_BUILD_PYTHON=OFF
@@ -42,7 +37,7 @@ jobs:
 
   cpp-benchmark:
     name: Benchmark
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: cpp-build-test
 
     steps:
@@ -51,15 +46,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build
+          sudo apt-get install -y cmake ninja-build g++-12
 
-      - name: Configure and Build
+      - name: Build
         run: |
-          export CC=gcc-12
-          export CXX=g++-12
           cmake -B build -G Ninja \
+            -DCMAKE_CXX_COMPILER=g++-12 \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_CXX_FLAGS="-O3 -DNDEBUG" \
+            -DCMAKE_CXX_FLAGS="-O2" \
             -DATLAS_BUILD_TESTS=OFF \
             -DATLAS_BUILD_BENCHMARKS=ON \
             -DATLAS_BUILD_PYTHON=OFF
