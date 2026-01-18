@@ -1169,86 +1169,6 @@ def render_metric(label, value, delta=None, delta_type="positive", icon="📊", 
     """, unsafe_allow_html=True)
 
 
-def render_trading_panel(book):
-    """Render trading order panel."""
-    price = book['mid']
-    change_pct = np.random.uniform(-3, 5)
-    change_color = COLORS['success'] if change_pct >= 0 else COLORS['danger']
-
-    html = f"""
-    <html>
-    <head>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-        <style>
-            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-            body {{
-                font-family: 'Inter', sans-serif;
-                background: {COLORS['bg_secondary']};
-                color: {COLORS['text_primary']};
-                padding: 20px;
-                border-radius: 16px;
-                border: 1px solid {COLORS['border']};
-            }}
-            .header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }}
-            .title {{ font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 700; color: {COLORS['accent_primary']}; }}
-            .ai-badge {{ background: linear-gradient(135deg, {COLORS['accent_primary']}, {COLORS['accent_secondary']}); padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }}
-            .price-section {{ text-align: center; margin-bottom: 24px; padding: 16px; background: rgba(255,107,0,0.1); border-radius: 12px; }}
-            .price-label {{ color: {COLORS['text_secondary']}; font-size: 0.85rem; margin-bottom: 4px; }}
-            .price-value {{ font-family: 'Orbitron', sans-serif; font-size: 2rem; font-weight: 700; }}
-            .price-change {{ font-size: 1rem; font-weight: 600; margin-top: 4px; }}
-            .tabs {{ display: flex; gap: 8px; margin-bottom: 16px; }}
-            .tab {{ flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }}
-            .tab.buy {{ background: {COLORS['success']}; color: #000; }}
-            .tab.sell {{ background: {COLORS['bg_tertiary']}; color: {COLORS['text_secondary']}; }}
-            .tab:hover {{ transform: scale(1.02); }}
-            .label {{ color: {COLORS['text_secondary']}; font-size: 0.85rem; margin-bottom: 8px; }}
-            .percent-btns {{ display: flex; gap: 8px; margin-bottom: 16px; }}
-            .percent-btn {{ flex: 1; padding: 8px; background: {COLORS['bg_tertiary']}; border: 1px solid {COLORS['border']}; border-radius: 6px; color: {COLORS['text_secondary']}; font-size: 0.8rem; cursor: pointer; transition: all 0.3s; }}
-            .percent-btn:hover {{ border-color: {COLORS['accent_primary']}; color: {COLORS['accent_primary']}; }}
-            .available {{ display: flex; justify-content: space-between; margin: 16px 0; font-size: 0.85rem; }}
-            .order-btn {{ width: 100%; padding: 14px; background: linear-gradient(135deg, {COLORS['success']}, #00b894); border: none; border-radius: 10px; color: #000; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; }}
-            .order-btn:hover {{ transform: scale(1.02); box-shadow: 0 0 20px rgba(0,212,170,0.4); }}
-        </style>
-    </head>
-    <body>
-        <div class="header">
-            <div class="title">Trading</div>
-            <div class="ai-badge">AI Predicted</div>
-        </div>
-        <div class="price-section">
-            <div class="price-label">BTC/USDT</div>
-            <div class="price-value">${price:,.2f}</div>
-            <div class="price-change" style="color: {change_color};">{change_pct:+.2f}%</div>
-        </div>
-        <div class="tabs">
-            <button class="tab buy">Buy</button>
-            <button class="tab sell">Sell</button>
-        </div>
-        <div class="label">Order Type</div>
-        <div class="tabs" style="margin-bottom: 16px;">
-            <button class="tab buy" style="padding: 10px; font-size: 0.8rem;">Limit</button>
-            <button class="tab sell" style="padding: 10px; font-size: 0.8rem;">Market</button>
-            <button class="tab sell" style="padding: 10px; font-size: 0.8rem;">Stop</button>
-        </div>
-        <div class="label">Amount</div>
-        <div class="percent-btns">
-            <button class="percent-btn">5%</button>
-            <button class="percent-btn">15%</button>
-            <button class="percent-btn">25%</button>
-            <button class="percent-btn">50%</button>
-            <button class="percent-btn">100%</button>
-        </div>
-        <div class="available">
-            <span style="color: {COLORS['text_secondary']};">Available</span>
-            <span>43,353.38 USDT</span>
-        </div>
-        <button class="order-btn">Place Buy Order</button>
-    </body>
-    </html>
-    """
-    components.html(html, height=480)
-
-
 def render_orderbook_table(book):
     """Render order book table."""
     max_size = max(max(book['ask_sizes']), max(book['bid_sizes']))
@@ -1438,7 +1358,41 @@ def section_overview(sim):
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
     with col2:
-        render_trading_panel(book)
+        # Portfolio Quick Stats instead of trading panel
+        st.markdown(f"""
+        <div style="background: {COLORS['bg_secondary']}; border: 1px solid {COLORS['border']}; border-radius: 16px; padding: 24px; height: 100%;">
+            <div style="font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 700; color: {COLORS['accent_primary']}; margin-bottom: 20px;">
+                💼 Portfolio Overview
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 4px;">Total Value</div>
+                <div style="font-size: 1.8rem; font-weight: 700; color: {COLORS['text_primary']};">$124,532.00</div>
+                <div style="color: {COLORS['success']}; font-size: 0.9rem;">+12.4% all time</div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 4px;">Today's Change</div>
+                <div style="font-size: 1.2rem; font-weight: 600; color: {COLORS['success']};">+$1,245.00 (+1.01%)</div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 8px;">Asset Allocation</div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <span style="background: {COLORS['bg_tertiary']}; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; color: {COLORS['text_primary']};">BTC 45%</span>
+                    <span style="background: {COLORS['bg_tertiary']}; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; color: {COLORS['text_primary']};">ETH 30%</span>
+                    <span style="background: {COLORS['bg_tertiary']}; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; color: {COLORS['text_primary']};">Other 25%</span>
+                </div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(255,107,0,0.1)); border-radius: 12px; padding: 16px;">
+                <div style="color: {COLORS['accent_primary']}; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">🤖 AI Insight</div>
+                <div style="color: {COLORS['text_secondary']}; font-size: 0.85rem; line-height: 1.5;">
+                    Your portfolio is well-diversified. Consider rebalancing if BTC exceeds 50% allocation.
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     # Second row
     col1, col2 = st.columns(2)
@@ -1475,8 +1429,8 @@ def section_overview(sim):
 
 
 def section_orderbook(sim):
-    """Order book section."""
-    st.markdown('<div class="section-header">Live Market Prices <span class="section-badge">Real-Time</span></div>', unsafe_allow_html=True)
+    """Market insights section."""
+    st.markdown('<div class="section-header">Market Insights <span class="section-badge">Real-Time</span></div>', unsafe_allow_html=True)
 
     book = sim.get_orderbook()
 
@@ -1492,7 +1446,41 @@ def section_orderbook(sim):
         render_orderbook_table(book)
 
     with col2:
-        render_trading_panel(book)
+        # Market Stats Card instead of trading panel
+        st.markdown(f"""
+        <div style="background: {COLORS['bg_secondary']}; border: 1px solid {COLORS['border']}; border-radius: 16px; padding: 24px;">
+            <div style="font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 700; color: {COLORS['accent_primary']}; margin-bottom: 20px;">
+                📊 Market Summary
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 4px;">Current Price</div>
+                <div style="font-size: 1.8rem; font-weight: 700; color: {COLORS['text_primary']};">${book['mid']:,.2f}</div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 4px;">24h Change</div>
+                <div style="font-size: 1.2rem; font-weight: 600; color: {COLORS['success']};">+2.4%</div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 4px;">Market Spread</div>
+                <div style="font-size: 1.2rem; font-weight: 600; color: {COLORS['text_primary']};">${book['spread']:.2f}</div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 4px;">24h Volume</div>
+                <div style="font-size: 1.2rem; font-weight: 600; color: {COLORS['text_primary']};">$2.4B</div>
+            </div>
+
+            <div style="background: {COLORS['bg_tertiary']}; border-radius: 12px; padding: 16px; margin-top: 20px;">
+                <div style="color: {COLORS['accent_primary']}; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">💡 Insight</div>
+                <div style="color: {COLORS['text_secondary']}; font-size: 0.85rem; line-height: 1.5;">
+                    Market showing strong buyer interest with healthy volume. Consider reviewing your portfolio allocation.
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
 
 def section_performance(sim):
@@ -1569,27 +1557,33 @@ def section_system(sim):
 # =============================================================================
 def render_welcome():
     """Render welcome hero section for new users."""
+    from datetime import timezone
+    utc_now = datetime.now(timezone.utc)
+
     st.markdown(f"""
     <div style="background: linear-gradient(135deg, {COLORS['bg_secondary']} 0%, {COLORS['bg_tertiary']} 100%); border-radius: 20px; padding: 40px; margin-bottom: 30px; border: 1px solid {COLORS['border']}; text-align: center;">
-        <div style="font-size: 3rem; margin-bottom: 16px;">👋</div>
+        <div style="font-size: 3rem; margin-bottom: 16px;">📊</div>
         <h1 style="font-family: 'Orbitron', sans-serif; font-size: 2rem; margin-bottom: 12px; background: {COLORS['accent_gradient']}; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
             Welcome to Atlas
         </h1>
         <p style="color: {COLORS['text_secondary']}; font-size: 1.1rem; max-width: 600px; margin: 0 auto 24px auto; line-height: 1.6;">
-            Your intelligent trading companion. Watch live market data, track performance, and let AI help you make smarter decisions.
+            Your intelligent portfolio companion. Track your investments, analyze market insights, and let AI help you make smarter decisions.
         </p>
+        <div style="color: {COLORS['text_muted']}; font-size: 0.85rem; margin-bottom: 24px;">
+            🕐 {utc_now.strftime('%B %d, %Y • %H:%M:%S')} UTC
+        </div>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <div style="background: {COLORS['bg_primary']}; padding: 16px 24px; border-radius: 12px; border: 1px solid {COLORS['border']};">
-                <div style="color: {COLORS['accent_primary']}; font-size: 1.5rem; font-weight: 700;">16ns</div>
-                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">Lightning Fast</div>
+                <div style="color: {COLORS['accent_primary']}; font-size: 1.5rem; font-weight: 700;">Real-Time</div>
+                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">Live Data</div>
             </div>
             <div style="background: {COLORS['bg_primary']}; padding: 16px 24px; border-radius: 12px; border: 1px solid {COLORS['border']};">
                 <div style="color: {COLORS['success']}; font-size: 1.5rem; font-weight: 700;">94.2%</div>
                 <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">AI Accuracy</div>
             </div>
             <div style="background: {COLORS['bg_primary']}; padding: 16px 24px; border-radius: 12px; border: 1px solid {COLORS['border']};">
-                <div style="color: {COLORS['info']}; font-size: 1.5rem; font-weight: 700;">24/7</div>
-                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">Always On</div>
+                <div style="color: {COLORS['info']}; font-size: 1.5rem; font-weight: 700;">Secure</div>
+                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">Your Data</div>
             </div>
         </div>
     </div>
@@ -1633,7 +1627,7 @@ def main():
         # User-friendly navigation
         page = st.radio(
             "Navigate",
-            ["🏠 Home", "💹 Live Market", "📊 My Returns", "⚙️ How It Works"],
+            ["🏠 Home", "📊 My Portfolio", "💡 Market Insights", "⚙️ Technology"],
             label_visibility="collapsed"
         )
 
@@ -1641,6 +1635,8 @@ def main():
 
         # Live stats with friendly labels
         book = sim.get_orderbook()
+        from datetime import timezone
+        utc_now = datetime.now(timezone.utc)
 
         st.markdown(f"""
         <div style="color: {COLORS['text_muted']}; font-size: 0.75rem; margin-bottom: 4px;">LIVE BITCOIN PRICE</div>
@@ -1648,9 +1644,10 @@ def main():
         st.metric("", f"${book['mid']:,.2f}", f"{np.random.uniform(-2, 3):.2f}%")
 
         st.markdown(f"""
-        <div style="color: {COLORS['text_muted']}; font-size: 0.75rem; margin-bottom: 4px; margin-top: 16px;">BUY/SELL GAP</div>
+        <div style="color: {COLORS['text_muted']}; font-size: 0.7rem; margin-top: 8px;">
+            🕐 {utc_now.strftime('%H:%M:%S')} UTC
+        </div>
         """, unsafe_allow_html=True)
-        st.metric("", f"${book['spread']:.2f}", help="The difference between buying and selling price")
 
         st.markdown("---")
 
@@ -1677,12 +1674,12 @@ def main():
 
         st.markdown("---")
 
-        # Help section
+        # Contact section
         st.markdown(f"""
         <div style="text-align: center; padding: 12px;">
             <div style="color: {COLORS['text_muted']}; font-size: 0.8rem; margin-bottom: 8px;">Need help?</div>
-            <a href="https://github.com/atharvajoshi01/Atlas" target="_blank" style="color: {COLORS['accent_primary']}; text-decoration: none; font-size: 0.85rem;">
-                📖 View Documentation
+            <a href="mailto:atharvajoshi2024@gmail.com?subject=Atlas%20Dashboard%20Inquiry" style="color: {COLORS['accent_primary']}; text-decoration: none; font-size: 0.85rem;">
+                ✉️ Contact Us
             </a>
         </div>
         """, unsafe_allow_html=True)
@@ -1693,25 +1690,25 @@ def main():
     if "Home" in page:
         render_welcome()
         section_overview(sim)
-    elif "Live Market" in page:
+    elif "My Portfolio" in page:
         render_info_card(
-            "What is the Order Book?",
-            "This shows all current buy and sell orders in the market. Green prices are people wanting to buy, red prices are people wanting to sell. The closer they are, the more active the market!",
-            "📚"
-        )
-        section_orderbook(sim)
-    elif "My Returns" in page:
-        render_info_card(
-            "Understanding Your Performance",
-            "Track how your investments are doing over time. Green means you're making money, red means losing. The charts show your journey - every investor has ups and downs!",
-            "📈"
+            "Your Investment Portfolio",
+            "Track all your investments in one place. Monitor your returns, analyze performance over time, and make informed decisions based on real data.",
+            "📊"
         )
         section_performance(sim)
-    elif "How It Works" in page:
+    elif "Market Insights" in page:
+        render_info_card(
+            "Real-Time Market Data",
+            "Stay informed with live market prices and depth analysis. Understanding market dynamics helps you make better investment decisions.",
+            "💡"
+        )
+        section_orderbook(sim)
+    elif "Technology" in page:
         render_info_card(
             "The Technology Behind Atlas",
-            "Atlas uses cutting-edge technology to process millions of trades per second. These benchmarks show how fast our system responds - measured in nanoseconds (billionths of a second)!",
-            "⚡"
+            "Atlas uses cutting-edge technology to process millions of data points per second. These benchmarks show how fast our system responds - measured in nanoseconds (billionths of a second)!",
+            "⚙️"
         )
         section_system(sim)
 
