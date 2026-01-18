@@ -28,6 +28,7 @@ jobs:
             -DATLAS_BUILD_TESTS=ON \
             -DATLAS_BUILD_BENCHMARKS=ON \
             -DATLAS_BUILD_PYTHON=OFF
+            -DATLAS_NATIVE_ARCH=OFF
 
       - name: Build
         run: cmake --build build --parallel
@@ -57,12 +58,8 @@ jobs:
             -DATLAS_BUILD_TESTS=OFF \
             -DATLAS_BUILD_BENCHMARKS=ON \
             -DATLAS_BUILD_PYTHON=OFF
+            -DATLAS_NATIVE_ARCH=OFF
           cmake --build build --parallel
-
-      - name: Run Benchmarks
-        run: ./build/atlas_benchmarks --benchmark_format=console
-
-
 
       - name: Run Benchmarks
         run: ./build/atlas_benchmarks --benchmark_format=console
