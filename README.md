@@ -183,22 +183,40 @@ atlas/
 
 ## Dashboard
 
-The project includes a Streamlit dashboard for real-time visualization:
+Premium animated trading dashboard with TradingView-inspired UI.
+
+### Features
+- **Interactive Candlestick Charts**: Real-time OHLC with volume overlay
+- **Trading Panel**: Buy/Sell tabs, order types, percentage buttons
+- **AI Prediction Badges**: ML-driven market direction indicators
+- **Order Book Depth**: Live bid/ask visualization with depth bars
+- **Performance Analytics**: Equity curves, drawdown, rolling Sharpe
+- **System Metrics**: Sub-microsecond latency benchmarks
+
+### Design
+- Orange/Amber color scheme with glassmorphism effects
+- 15+ CSS animations (slide-up, fade-in, pulse-glow, shimmer)
+- Animated particle background
+- Dark theme inspired by TradingView and Bloomberg
+
+### Run Locally
 
 ```bash
-# Install dashboard dependencies
-pip install -e ".[dashboard]"
-
-# Run locally
+pip install streamlit plotly pandas numpy
 streamlit run dashboard/app.py
 ```
 
+### Deploy to Hugging Face Spaces (Free)
+1. Create a new Space at [huggingface.co/spaces](https://huggingface.co/spaces)
+2. Select **Streamlit** as the SDK
+3. Upload the `dashboard/` folder contents (app.py, requirements.txt, README.md)
+4. Your dashboard will be live at `https://huggingface.co/spaces/YOUR_USERNAME/atlas-dashboard`
+
 ### Deploy to Streamlit Cloud
-1. Fork/push this repository to GitHub
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Connect your GitHub account
-4. Select this repository and `dashboard/app.py` as the main file
-5. Deploy
+1. Go to [share.streamlit.io](https://share.streamlit.io)
+2. Connect your GitHub account
+3. Select this repository and `dashboard/app.py` as the main file
+4. Deploy
 
 ## Author
 

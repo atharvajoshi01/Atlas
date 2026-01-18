@@ -1,8 +1,8 @@
 ---
 title: Atlas Trading Dashboard
 emoji: 📈
-colorFrom: cyan
-colorTo: indigo
+colorFrom: orange
+colorTo: amber
 sdk: streamlit
 sdk_version: 1.28.0
 app_file: app.py
@@ -12,22 +12,31 @@ license: mit
 
 # Atlas: Low-Latency Order Book Engine
 
-Premium trading dashboard with real-time visualization for the Atlas quantitative trading system.
+Premium animated trading dashboard with TradingView-inspired UI for the Atlas quantitative trading system.
 
 ## Features
 
-- **Real-time Order Book**: Live depth visualization and heatmaps
+- **Interactive Candlestick Charts**: Real-time OHLC with volume overlay
+- **Trading Panel**: Buy/Sell tabs, order types, percentage buttons
+- **AI Prediction Badges**: ML-driven market direction indicators
+- **Order Book Depth**: Live bid/ask visualization with depth bars
 - **Performance Analytics**: Equity curves, drawdown, rolling Sharpe
-- **Alpha Signals**: ML-based signal monitoring and feature importance
 - **System Metrics**: Sub-microsecond latency benchmarks (16ns order add)
 - **Backtest Lab**: Interactive strategy simulation
+
+## Design
+
+- Orange/Amber color scheme with glassmorphism effects
+- 15+ CSS animations (slide-up, fade-in, pulse-glow, shimmer)
+- Animated particle background
+- Dark theme inspired by TradingView and Bloomberg
 
 ## Tech Stack
 
 - C++ order book engine with 16ns latency
 - Python ML pipeline with Numba JIT
 - Streamlit + Plotly for visualization
-- Dark theme inspired by Bloomberg/TradingView
+- Responsive design with smooth animations
 
 ## Links
 
