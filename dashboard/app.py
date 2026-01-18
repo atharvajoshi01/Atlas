@@ -1,6 +1,7 @@
 """Atlas Trading Dashboard - Ultra Premium with Animations."""
 
 import streamlit as st
+import streamlit.components.v1 as components
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -1151,98 +1152,196 @@ def render_trading_panel(book):
     """Render trading order panel."""
     price = book['mid']
     change_pct = np.random.uniform(-3, 5)
-    change_class = "positive" if change_pct >= 0 else "negative"
+    change_color = COLORS['success'] if change_pct >= 0 else COLORS['danger']
 
-    st.markdown(f"""
-    <div class="trading-panel">
-        <div class="chart-header">
-            <div class="chart-title">
-                <div class="icon">💹</div>
-                Trading
-            </div>
+    html = f"""
+    <html>
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{
+                font-family: 'Inter', sans-serif;
+                background: {COLORS['bg_secondary']};
+                color: {COLORS['text_primary']};
+                padding: 20px;
+                border-radius: 16px;
+                border: 1px solid {COLORS['border']};
+            }}
+            .header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }}
+            .title {{ font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 700; color: {COLORS['accent_primary']}; }}
+            .ai-badge {{ background: linear-gradient(135deg, {COLORS['accent_primary']}, {COLORS['accent_secondary']}); padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }}
+            .price-section {{ text-align: center; margin-bottom: 24px; padding: 16px; background: rgba(255,107,0,0.1); border-radius: 12px; }}
+            .price-label {{ color: {COLORS['text_secondary']}; font-size: 0.85rem; margin-bottom: 4px; }}
+            .price-value {{ font-family: 'Orbitron', sans-serif; font-size: 2rem; font-weight: 700; }}
+            .price-change {{ font-size: 1rem; font-weight: 600; margin-top: 4px; }}
+            .tabs {{ display: flex; gap: 8px; margin-bottom: 16px; }}
+            .tab {{ flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }}
+            .tab.buy {{ background: {COLORS['success']}; color: #000; }}
+            .tab.sell {{ background: {COLORS['bg_tertiary']}; color: {COLORS['text_secondary']}; }}
+            .tab:hover {{ transform: scale(1.02); }}
+            .label {{ color: {COLORS['text_secondary']}; font-size: 0.85rem; margin-bottom: 8px; }}
+            .percent-btns {{ display: flex; gap: 8px; margin-bottom: 16px; }}
+            .percent-btn {{ flex: 1; padding: 8px; background: {COLORS['bg_tertiary']}; border: 1px solid {COLORS['border']}; border-radius: 6px; color: {COLORS['text_secondary']}; font-size: 0.8rem; cursor: pointer; transition: all 0.3s; }}
+            .percent-btn:hover {{ border-color: {COLORS['accent_primary']}; color: {COLORS['accent_primary']}; }}
+            .available {{ display: flex; justify-content: space-between; margin: 16px 0; font-size: 0.85rem; }}
+            .order-btn {{ width: 100%; padding: 14px; background: linear-gradient(135deg, {COLORS['success']}, #00b894); border: none; border-radius: 10px; color: #000; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; }}
+            .order-btn:hover {{ transform: scale(1.02); box-shadow: 0 0 20px rgba(0,212,170,0.4); }}
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <div class="title">Trading</div>
             <div class="ai-badge">AI Predicted</div>
         </div>
-
-        <div class="price-display">
+        <div class="price-section">
             <div class="price-label">BTC/USDT</div>
             <div class="price-value">${price:,.2f}</div>
-            <div class="price-change {change_class}">{change_pct:+.2f}%</div>
+            <div class="price-change" style="color: {change_color};">{change_pct:+.2f}%</div>
         </div>
-
-        <div class="trading-tabs">
-            <button class="trading-tab buy">Buy</button>
-            <button class="trading-tab sell">Sell</button>
+        <div class="tabs">
+            <button class="tab buy">Buy</button>
+            <button class="tab sell">Sell</button>
         </div>
-
-        <div style="color: {COLORS['text_secondary']}; font-size: 0.85rem; margin-bottom: 8px;">Order Type</div>
-        <div class="trading-tabs" style="margin-bottom: 20px;">
-            <button class="trading-tab buy" style="flex: 1; padding: 10px; font-size: 0.85rem;">Limit</button>
-            <button class="trading-tab sell" style="flex: 1; padding: 10px; font-size: 0.85rem;">Market</button>
-            <button class="trading-tab sell" style="flex: 1; padding: 10px; font-size: 0.85rem;">Stop</button>
+        <div class="label">Order Type</div>
+        <div class="tabs" style="margin-bottom: 16px;">
+            <button class="tab buy" style="padding: 10px; font-size: 0.8rem;">Limit</button>
+            <button class="tab sell" style="padding: 10px; font-size: 0.8rem;">Market</button>
+            <button class="tab sell" style="padding: 10px; font-size: 0.8rem;">Stop</button>
         </div>
-
-        <div style="color: {COLORS['text_secondary']}; font-size: 0.85rem; margin-bottom: 8px;">Amount</div>
-        <div class="percent-buttons">
+        <div class="label">Amount</div>
+        <div class="percent-btns">
             <button class="percent-btn">5%</button>
             <button class="percent-btn">15%</button>
             <button class="percent-btn">25%</button>
             <button class="percent-btn">50%</button>
             <button class="percent-btn">100%</button>
         </div>
-
-        <div style="display: flex; justify-content: space-between; color: {COLORS['text_secondary']}; font-size: 0.85rem; margin: 16px 0;">
-            <span>Available</span>
-            <span style="color: {COLORS['text_primary']};">43,353.38 USDT</span>
+        <div class="available">
+            <span style="color: {COLORS['text_secondary']};">Available</span>
+            <span>43,353.38 USDT</span>
         </div>
-
-        <button class="order-btn buy">Place Buy Order</button>
-    </div>
-    """, unsafe_allow_html=True)
+        <button class="order-btn">Place Buy Order</button>
+    </body>
+    </html>
+    """
+    components.html(html, height=480)
 
 
 def render_orderbook_table(book):
     """Render order book table."""
-    html = f"""
-    <div class="orderbook-table">
-        <div class="orderbook-header">
-            <span>Price</span>
-            <span style="text-align: center;">Size (BTC)</span>
-            <span style="text-align: right;">Total</span>
-        </div>
-    """
-
-    # Asks (reversed, top = highest)
     max_size = max(max(book['ask_sizes']), max(book['bid_sizes']))
+
+    # Build ask rows
+    ask_rows = ""
     for i in range(min(6, len(book['ask_prices']))-1, -1, -1):
         depth = (book['ask_sizes'][i] / max_size) * 100
-        html += f"""
-        <div class="orderbook-row ask" style="--depth: {depth}%;">
-            <span class="ask-price">${book['ask_prices'][i]:,.2f}</span>
-            <span style="text-align: center;">{book['ask_sizes'][i]:.4f}</span>
-            <span style="text-align: right;">{book['ask_sizes'][i] * book['ask_prices'][i]:,.2f}</span>
+        ask_rows += f"""
+        <div class="row ask" style="--depth: {depth}%;">
+            <span class="price ask-price">${book['ask_prices'][i]:,.2f}</span>
+            <span class="size">{book['ask_sizes'][i]:.4f}</span>
+            <span class="total">{book['ask_sizes'][i] * book['ask_prices'][i]:,.2f}</span>
         </div>
         """
 
-    # Spread
-    html += f"""
-    <div style="padding: 8px 16px; text-align: center; background: {COLORS['bg_secondary']}; color: {COLORS['accent_primary']}; font-weight: 600;">
-        Spread: ${book['spread']:.2f} ({book['spread']/book['mid']*100:.3f}%)
-    </div>
-    """
-
-    # Bids
+    # Build bid rows
+    bid_rows = ""
     for i in range(min(6, len(book['bid_prices']))):
         depth = (book['bid_sizes'][i] / max_size) * 100
-        html += f"""
-        <div class="orderbook-row bid" style="--depth: {depth}%;">
-            <span class="bid-price">${book['bid_prices'][i]:,.2f}</span>
-            <span style="text-align: center;">{book['bid_sizes'][i]:.4f}</span>
-            <span style="text-align: right;">{book['bid_sizes'][i] * book['bid_prices'][i]:,.2f}</span>
+        bid_rows += f"""
+        <div class="row bid" style="--depth: {depth}%;">
+            <span class="price bid-price">${book['bid_prices'][i]:,.2f}</span>
+            <span class="size">{book['bid_sizes'][i]:.4f}</span>
+            <span class="total">{book['bid_sizes'][i] * book['bid_prices'][i]:,.2f}</span>
         </div>
         """
 
-    html += "</div>"
-    st.markdown(html, unsafe_allow_html=True)
+    html = f"""
+    <html>
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{
+                font-family: 'Inter', sans-serif;
+                background: {COLORS['bg_secondary']};
+                color: {COLORS['text_primary']};
+                border-radius: 12px;
+                overflow: hidden;
+            }}
+            .header {{
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                padding: 12px 16px;
+                background: {COLORS['bg_tertiary']};
+                font-size: 0.75rem;
+                font-weight: 600;
+                color: {COLORS['text_secondary']};
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }}
+            .header span:nth-child(2) {{ text-align: center; }}
+            .header span:nth-child(3) {{ text-align: right; }}
+            .row {{
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                padding: 10px 16px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.85rem;
+                position: relative;
+                transition: background 0.2s;
+            }}
+            .row::before {{
+                content: '';
+                position: absolute;
+                top: 0;
+                height: 100%;
+                opacity: 0.15;
+                transition: width 0.3s;
+            }}
+            .row.ask::before {{
+                right: 0;
+                width: var(--depth);
+                background: linear-gradient(90deg, transparent, {COLORS['danger']});
+            }}
+            .row.bid::before {{
+                left: 0;
+                width: var(--depth);
+                background: linear-gradient(270deg, transparent, {COLORS['success']});
+            }}
+            .row:hover {{ background: rgba(255,255,255,0.05); }}
+            .row span {{ position: relative; z-index: 1; }}
+            .size {{ text-align: center; }}
+            .total {{ text-align: right; color: {COLORS['text_secondary']}; }}
+            .ask-price {{ color: {COLORS['danger']}; font-weight: 500; }}
+            .bid-price {{ color: {COLORS['success']}; font-weight: 500; }}
+            .spread {{
+                padding: 10px 16px;
+                text-align: center;
+                background: {COLORS['bg_primary']};
+                color: {COLORS['accent_primary']};
+                font-weight: 600;
+                font-size: 0.9rem;
+                border-top: 1px solid {COLORS['border']};
+                border-bottom: 1px solid {COLORS['border']};
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <span>Price</span>
+            <span>Size (BTC)</span>
+            <span>Total</span>
+        </div>
+        {ask_rows}
+        <div class="spread">
+            Spread: ${book['spread']:.2f} ({book['spread']/book['mid']*100:.3f}%)
+        </div>
+        {bid_rows}
+    </body>
+    </html>
+    """
+    components.html(html, height=420)
 
 
 def render_benchmark(name, actual, target, icon="⚡"):
