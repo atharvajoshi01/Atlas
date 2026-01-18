@@ -1310,6 +1310,208 @@ def render_benchmark(name, actual, target, icon="⚡"):
     """, unsafe_allow_html=True)
 
 
+def render_portfolio_card():
+    """Render portfolio overview card using components.html for reliable rendering."""
+    html = f"""
+    <html>
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{
+                font-family: 'Inter', sans-serif;
+                background: {COLORS['bg_secondary']};
+                color: {COLORS['text_primary']};
+                border-radius: 16px;
+                padding: 24px;
+                border: 1px solid {COLORS['border']};
+            }}
+            .title {{
+                font-family: 'Orbitron', sans-serif;
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: {COLORS['accent_primary']};
+                margin-bottom: 20px;
+            }}
+            .stat-block {{
+                margin-bottom: 20px;
+            }}
+            .stat-label {{
+                color: {COLORS['text_secondary']};
+                font-size: 0.8rem;
+                margin-bottom: 4px;
+            }}
+            .stat-value {{
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: {COLORS['text_primary']};
+            }}
+            .stat-change {{
+                color: {COLORS['success']};
+                font-size: 0.9rem;
+            }}
+            .stat-value-sm {{
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: {COLORS['success']};
+            }}
+            .allocation {{
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+            }}
+            .allocation span {{
+                background: {COLORS['bg_tertiary']};
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                color: {COLORS['text_primary']};
+            }}
+            .insight-box {{
+                background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(255,107,0,0.1));
+                border-radius: 12px;
+                padding: 16px;
+            }}
+            .insight-title {{
+                color: {COLORS['accent_primary']};
+                font-weight: 600;
+                margin-bottom: 8px;
+                font-size: 0.9rem;
+            }}
+            .insight-text {{
+                color: {COLORS['text_secondary']};
+                font-size: 0.85rem;
+                line-height: 1.5;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="title">💼 Portfolio Overview</div>
+
+        <div class="stat-block">
+            <div class="stat-label">Total Value</div>
+            <div class="stat-value">$124,532.00</div>
+            <div class="stat-change">+12.4% all time</div>
+        </div>
+
+        <div class="stat-block">
+            <div class="stat-label">Today's Change</div>
+            <div class="stat-value-sm">+$1,245.00 (+1.01%)</div>
+        </div>
+
+        <div class="stat-block">
+            <div class="stat-label" style="margin-bottom: 8px;">Asset Allocation</div>
+            <div class="allocation">
+                <span>BTC 45%</span>
+                <span>ETH 30%</span>
+                <span>Other 25%</span>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            <div class="insight-title">🤖 AI Insight</div>
+            <div class="insight-text">Your portfolio is well-diversified. Consider rebalancing if BTC exceeds 50% allocation.</div>
+        </div>
+    </body>
+    </html>
+    """
+    components.html(html, height=380)
+
+
+def render_market_summary_card(book):
+    """Render market summary card using components.html for reliable rendering."""
+    html = f"""
+    <html>
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{
+                font-family: 'Inter', sans-serif;
+                background: {COLORS['bg_secondary']};
+                color: {COLORS['text_primary']};
+                border-radius: 16px;
+                padding: 24px;
+                border: 1px solid {COLORS['border']};
+            }}
+            .title {{
+                font-family: 'Orbitron', sans-serif;
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: {COLORS['accent_primary']};
+                margin-bottom: 20px;
+            }}
+            .stat-block {{
+                margin-bottom: 20px;
+            }}
+            .stat-label {{
+                color: {COLORS['text_secondary']};
+                font-size: 0.8rem;
+                margin-bottom: 4px;
+            }}
+            .stat-value {{
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: {COLORS['text_primary']};
+            }}
+            .stat-value-sm {{
+                font-size: 1.2rem;
+                font-weight: 600;
+            }}
+            .green {{ color: {COLORS['success']}; }}
+            .white {{ color: {COLORS['text_primary']}; }}
+            .insight-box {{
+                background: {COLORS['bg_tertiary']};
+                border-radius: 12px;
+                padding: 16px;
+                margin-top: 20px;
+            }}
+            .insight-title {{
+                color: {COLORS['accent_primary']};
+                font-weight: 600;
+                margin-bottom: 8px;
+                font-size: 0.9rem;
+            }}
+            .insight-text {{
+                color: {COLORS['text_secondary']};
+                font-size: 0.85rem;
+                line-height: 1.5;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="title">📊 Market Summary</div>
+
+        <div class="stat-block">
+            <div class="stat-label">Current Price</div>
+            <div class="stat-value">${book['mid']:,.2f}</div>
+        </div>
+
+        <div class="stat-block">
+            <div class="stat-label">24h Change</div>
+            <div class="stat-value-sm green">+2.4%</div>
+        </div>
+
+        <div class="stat-block">
+            <div class="stat-label">Market Spread</div>
+            <div class="stat-value-sm white">${book['spread']:.2f}</div>
+        </div>
+
+        <div class="stat-block">
+            <div class="stat-label">24h Volume</div>
+            <div class="stat-value-sm white">$2.4B</div>
+        </div>
+
+        <div class="insight-box">
+            <div class="insight-title">💡 Insight</div>
+            <div class="insight-text">Market showing strong buyer interest with healthy volume. Consider reviewing your portfolio allocation.</div>
+        </div>
+    </body>
+    </html>
+    """
+    components.html(html, height=420)
+
+
 # =============================================================================
 # MAIN SECTIONS
 # =============================================================================
@@ -1358,41 +1560,8 @@ def section_overview(sim):
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
     with col2:
-        # Portfolio Quick Stats instead of trading panel
-        st.markdown(f"""
-        <div style="background: {COLORS['bg_secondary']}; border: 1px solid {COLORS['border']}; border-radius: 16px; padding: 24px; height: 100%;">
-            <div style="font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 700; color: {COLORS['accent_primary']}; margin-bottom: 20px;">
-                💼 Portfolio Overview
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 4px;">Total Value</div>
-                <div style="font-size: 1.8rem; font-weight: 700; color: {COLORS['text_primary']};">$124,532.00</div>
-                <div style="color: {COLORS['success']}; font-size: 0.9rem;">+12.4% all time</div>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 4px;">Today's Change</div>
-                <div style="font-size: 1.2rem; font-weight: 600; color: {COLORS['success']};">+$1,245.00 (+1.01%)</div>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 8px;">Asset Allocation</div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <span style="background: {COLORS['bg_tertiary']}; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; color: {COLORS['text_primary']};">BTC 45%</span>
-                    <span style="background: {COLORS['bg_tertiary']}; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; color: {COLORS['text_primary']};">ETH 30%</span>
-                    <span style="background: {COLORS['bg_tertiary']}; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; color: {COLORS['text_primary']};">Other 25%</span>
-                </div>
-            </div>
-
-            <div style="background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(255,107,0,0.1)); border-radius: 12px; padding: 16px;">
-                <div style="color: {COLORS['accent_primary']}; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">🤖 AI Insight</div>
-                <div style="color: {COLORS['text_secondary']}; font-size: 0.85rem; line-height: 1.5;">
-                    Your portfolio is well-diversified. Consider rebalancing if BTC exceeds 50% allocation.
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        # Portfolio Quick Stats - using components.html for reliable rendering
+        render_portfolio_card()
 
     # Second row
     col1, col2 = st.columns(2)
@@ -1451,41 +1620,8 @@ def section_orderbook(sim):
         render_orderbook_table(book)
 
     with col2:
-        # Market Stats Card instead of trading panel
-        st.markdown(f"""
-        <div style="background: {COLORS['bg_secondary']}; border: 1px solid {COLORS['border']}; border-radius: 16px; padding: 24px;">
-            <div style="font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 700; color: {COLORS['accent_primary']}; margin-bottom: 20px;">
-                📊 Market Summary
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 4px;">Current Price</div>
-                <div style="font-size: 1.8rem; font-weight: 700; color: {COLORS['text_primary']};">${book['mid']:,.2f}</div>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 4px;">24h Change</div>
-                <div style="font-size: 1.2rem; font-weight: 600; color: {COLORS['success']};">+2.4%</div>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 4px;">Market Spread</div>
-                <div style="font-size: 1.2rem; font-weight: 600; color: {COLORS['text_primary']};">${book['spread']:.2f}</div>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-bottom: 4px;">24h Volume</div>
-                <div style="font-size: 1.2rem; font-weight: 600; color: {COLORS['text_primary']};">$2.4B</div>
-            </div>
-
-            <div style="background: {COLORS['bg_tertiary']}; border-radius: 12px; padding: 16px; margin-top: 20px;">
-                <div style="color: {COLORS['accent_primary']}; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">💡 Insight</div>
-                <div style="color: {COLORS['text_secondary']}; font-size: 0.85rem; line-height: 1.5;">
-                    Market showing strong buyer interest with healthy volume. Consider reviewing your portfolio allocation.
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        # Market Stats Card - using components.html for reliable rendering
+        render_market_summary_card(book)
 
 
 def section_performance(sim):
