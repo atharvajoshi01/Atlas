@@ -117,6 +117,7 @@ if(ATLAS_BUILD_TESTS)
         tests/cpp/test_matching_engine.cpp
         tests/cpp/test_memory_pool.cpp
         tests/cpp/test_ring_buffer.cpp
+        tests/cpp/test_itch_parser.cpp
     )
     target_link_libraries(atlas_tests PRIVATE atlas_core GTest::gtest_main)
 
@@ -129,6 +130,7 @@ if(ATLAS_BUILD_BENCHMARKS)
     add_executable(atlas_benchmarks
         tests/cpp/benchmark/bench_order_book.cpp
         tests/cpp/benchmark/bench_matching.cpp
+        tests/cpp/benchmark/bench_itch.cpp
     )
     target_link_libraries(atlas_benchmarks PRIVATE atlas_core benchmark::benchmark)
 endif()

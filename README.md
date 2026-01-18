@@ -14,6 +14,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Add%20Order-16%20ns-orange?style=for-the-badge" alt="Add Order: 16ns"/>
   <img src="https://img.shields.io/badge/Get%20BBO-0.7%20ns-green?style=for-the-badge" alt="Get BBO: 0.7ns"/>
+  <img src="https://img.shields.io/badge/ITCH%20Parse-3.9%20ns-purple?style=for-the-badge" alt="ITCH Parse: 3.9ns"/>
   <img src="https://img.shields.io/badge/Throughput-62M%20ops%2Fs-blue?style=for-the-badge" alt="Throughput: 62M ops/s"/>
 </p>
 
@@ -24,12 +25,20 @@ A production-grade limit order book engine achieving **sub-20 nanosecond** order
 ## Benchmark Results (Apple M1 Pro)
 
 ```
+Order Book Operations:
 BM_OrderBook_AddOrder          16.3 ns    62M ops/s    ← Core operation
 BM_OrderBook_CancelOrder       50.8 ns    20M ops/s
 BM_OrderBook_GetBBO             0.72 ns   1.4B ops/s   ← Sub-nanosecond
 BM_OrderBook_BestBid            0.28 ns   3.5B ops/s
 BM_OrderBook_MidPrice           0.67 ns   1.5B ops/s
 BM_OrderBook_GetDepth/10       41.0 ns    24M ops/s
+
+ITCH 5.0 Protocol Parsing:
+BM_ITCH_ParseAddOrder           3.9 ns   258M msg/s   ← Single message
+BM_ITCH_ParseMessageStream     ~4 GB/s   148M msg/s   ← Bulk parsing
+BM_ITCH_Be64ToHost             0.24 ns   4.2B ops/s   ← Endianness
+
+Infrastructure:
 BM_PoolAllocator_Allocate       1.7 ns   588M ops/s
 BM_RingBuffer_PushPop           3.2 ns   620M ops/s
 BM_MatchingEngine_Cancel        2.8 ns   354M ops/s
@@ -73,7 +82,7 @@ make -j$(nproc)
     │ (SPSC, 3ns)   │                │ (std::map)    │                │ Priority      │
     │               │                │               │                │               │
     │ ITCH Parser   │                │ Order Index   │                │ IOC/FOK/GTC   │
-    │ (0.8ns/msg)   │                │ (hash map)    │                │ Support       │
+    │ (3.9ns/msg)   │                │ (hash map)    │                │ Support       │
     │               │                │               │                │               │
     │ Feed Handler  │                │ BBO Cache     │                │ Trade         │
     │ Interface     │                │ (0.7ns)       │                │ Callbacks     │
@@ -153,6 +162,38 @@ MarketMessage msg;
 if (buffer.pop(msg)) { /* process */ }
 ```
 
+### ITCH 5.0 Parser (`include/atlas/feed/itch_parser.hpp`)
+
+Production-grade NASDAQ ITCH 5.0 binary protocol parser.
+
+```cpp
+#include "atlas/feed/itch_parser.hpp"
+#include "atlas/feed/itch_handler.hpp"
+
+// Low-level parser with callbacks
+atlas::itch::Parser parser;
+parser.on_add_order([](const atlas::itch::AddOrder& msg) {
+    std::cout << "Order: " << msg.order_ref
+              << " @ " << msg.price_double() << "\n";
+});
+
+// Parse binary ITCH data - 3.9ns per message
+size_t consumed = parser.parse_messages(data, len);
+
+// High-level handler integrates with OrderBook
+atlas::ITCHHandler handler;
+handler.set_symbol_filter("AAPL");
+handler.on_trade([](const auto& trade) {
+    std::cout << "Trade: " << trade.quantity << " @ " << trade.price << "\n";
+});
+handler.initialize();
+handler.process(itch_data, len);
+
+auto* book = handler.get_order_book("AAPL");
+```
+
+**Supported message types:** Add Order (A/F), Order Executed (E/C), Order Cancel (X), Order Delete (D), Order Replace (U), Trade (P/Q), System Event (S), Stock Directory (R).
+
 ### Matching Engine (`include/atlas/matching/matching_engine.hpp`)
 
 Full matching with IOC, FOK, GTC order types.
@@ -187,15 +228,19 @@ Atlas/
 │   │   └── matching_engine.hpp # Price-time priority matching
 │   └── feed/
 │       ├── ring_buffer.hpp    # SPSC lock-free queue
+│       ├── itch_parser.hpp    # NASDAQ ITCH 5.0 parser
+│       ├── itch_handler.hpp   # ITCH to OrderBook bridge
 │       ├── market_data.hpp    # Message definitions
 │       └── feed_handler.hpp   # Feed handler interface
 ├── tests/cpp/
 │   ├── test_order_book.cpp
 │   ├── test_matching_engine.cpp
 │   ├── test_ring_buffer.cpp
+│   ├── test_itch_parser.cpp
 │   └── benchmark/
 │       ├── bench_order_book.cpp
-│       └── bench_matching.cpp
+│       ├── bench_matching.cpp
+│       └── bench_itch.cpp
 ├── atlas/                     # Python ML pipeline
 │   ├── features/              # 50+ order book features (Numba JIT)
 │   ├── signals/               # Alpha generation
@@ -212,6 +257,7 @@ Atlas/
 | **BBO caching** | 0.7ns best price access | `order_book.hpp` |
 | **Intrusive lists** | O(1) order removal | `price_level.hpp` |
 | **Power-of-2 sizing** | Fast modulo via bitmask | `ring_buffer.hpp` |
+| **Zero-copy parsing** | 3.9ns per ITCH message | `itch_parser.hpp` |
 | **Branch prediction hints** | `[[likely]]`/`[[unlikely]]` | Throughout |
 
 ## Python Integration
