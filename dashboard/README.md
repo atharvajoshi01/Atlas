@@ -1,8 +1,8 @@
 ---
 title: Atlas Trading Dashboard
 emoji: 📈
-colorFrom: orange
-colorTo: amber
+colorFrom: yellow
+colorTo: red
 sdk: docker
 pinned: true
 license: mit
