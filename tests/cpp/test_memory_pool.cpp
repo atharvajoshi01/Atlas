@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "atlas/memory/pool_allocator.hpp"
 
+#include <cstring>
 #include <thread>
 #include <vector>
 
