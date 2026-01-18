@@ -1,79 +1,69 @@
 name: CI
 
-  on:
-    push:
+on:
+  push:
+    branches: [main]
+  pull_request:
       branches: [main]
-    pull_request:
-      branches: [main]
 
-  jobs:
-    cpp-build-test:
-      name: C++ Build & Test
-      runs-on: ubuntu-latest
-      strategy:
-        matrix:
-          compiler: [gcc-12, clang-15]
-          build_type: [Release]
+jobs:
+  cpp-build-test:
+    name: C++ Build & Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [gcc-12]
+        build_type: [Release]
+          
+    steps:
+      - uses: actions/checkout@v4
 
-      steps:
-        - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build
 
-        - name: Install dependencies
-          run: |
-            sudo apt-get update
-            sudo apt-get install -y cmake ninja-build
+      - name: Configure
+        run: |
+          export CC=gcc-12
+          export CXX=g++-12
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CXX_FLAGS="-O3 -DNDEBUG" \
+            -DATLAS_BUILD_TESTS=ON \
+            -DATLAS_BUILD_BENCHMARKS=ON \
+            -DATLAS_BUILD_PYTHON=OFF
 
-        - name: Configure
-          run: |
-            if [ "${{ matrix.compiler }}" = "gcc-12" ]; then
-              export CC=gcc-12 CXX=g++-12
-            else
-              export CC=clang-15 CXX=clang++-15
-            fi
-            cmake -B build -G Ninja \
-              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-              -DATLAS_BUILD_TESTS=ON \
-              -DATLAS_BUILD_BENCHMARKS=ON \
-              -DATLAS_BUILD_PYTHON=OFF
+      - name: Build
+        run: cmake --build build --parallel
 
-        - name: Build
-          run: cmake --build build --parallel
+      - name: Run Tests
+        run: ctest --test-dir build --output-on-failure
 
-        - name: Run Tests
-          run: ctest --test-dir build --output-on-failure --verbose
+  cpp-benchmark:
+    name: Benchmark
+    runs-on: ubuntu-latest
+    needs: cpp-build-test
 
-    cpp-benchmark:
-      name: Benchmark
-      runs-on: ubuntu-latest
-      needs: cpp-build-test
+    steps:
+      - uses: actions/checkout@v4
 
-      steps:
-        - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build
 
-        - name: Install dependencies
-          run: |
-            sudo apt-get update
-            sudo apt-get install -y cmake ninja-build
+      - name: Configure and Build
+        run: |
+          export CC=gcc-12
+          export CXX=g++-12
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CXX_FLAGS="-O3 -DNDEBUG" \
+            -DATLAS_BUILD_TESTS=OFF \
+            -DATLAS_BUILD_BENCHMARKS=ON \
+            -DATLAS_BUILD_PYTHON=OFF
+          cmake --build build --parallel
 
-        - name: Configure & Build
-          run: |
-            cmake -B build -G Ninja \
-              -DCMAKE_BUILD_TYPE=Release \
-              -DATLAS_BUILD_TESTS=OFF \
-              -DATLAS_BUILD_BENCHMARKS=ON \
-              -DATLAS_BUILD_PYTHON=OFF
-            cmake --build build --parallel
-
-        - name: Run Benchmarks
-          run: |
-            ./build/atlas_benchmarks --benchmark_format=console | tee benchmark_output.txt
-            echo "## Benchmark Results" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            head -40 benchmark_output.txt >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-
-        - name: Upload benchmark results
-          uses: actions/upload-artifact@v4
-          with:
-            name: benchmark-results
-            path: benchmark_output.txt
+      - name: Run Benchmarks
+        run: ./build/atlas_benchmarks --benchmark_format=console
