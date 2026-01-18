@@ -1129,21 +1129,23 @@ def create_equity_chart(perf):
 # =============================================================================
 def render_header():
     """Render animated header."""
+    from datetime import timezone
+    utc_now = datetime.now(timezone.utc)
     st.markdown(f"""
     <div class="hero-header">
         <div style="display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1;">
             <div>
                 <h1 class="hero-title">ATLAS</h1>
-                <p class="hero-subtitle">Quantum Trading Engine • Sub-Microsecond Execution</p>
+                <p class="hero-subtitle">Low-Latency Order Book Engine • Sub-Microsecond Execution</p>
             </div>
             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px;">
                 <div class="hero-badge">
                     <span class="dot"></span>
-                    LIVE TRADING
+                    DEMO MODE
                 </div>
-                <div class="ai-badge">AI Predictions Active</div>
+                <div class="ai-badge">ML Pipeline Active</div>
                 <div style="font-family: 'JetBrains Mono'; color: {COLORS['text_secondary']}; font-size: 0.9rem;">
-                    {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} UTC
+                    {utc_now.strftime('%Y-%m-%d %H:%M:%S')} UTC
                 </div>
             </div>
         </div>
@@ -1310,12 +1312,12 @@ def render_benchmark(name, actual, target, icon="⚡"):
     """, unsafe_allow_html=True)
 
 
-def render_portfolio_card():
-    """Render portfolio overview card using components.html for reliable rendering."""
+def render_engine_demo_card():
+    """Render engine demo card using components.html for reliable rendering."""
     html = f"""
     <html>
     <head>
-        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
         <style>
             * {{ margin: 0; padding: 0; box-sizing: border-box; }}
             body {{
@@ -1334,7 +1336,7 @@ def render_portfolio_card():
                 margin-bottom: 20px;
             }}
             .stat-block {{
-                margin-bottom: 20px;
+                margin-bottom: 16px;
             }}
             .stat-label {{
                 color: {COLORS['text_secondary']};
@@ -1342,35 +1344,34 @@ def render_portfolio_card():
                 margin-bottom: 4px;
             }}
             .stat-value {{
-                font-size: 1.8rem;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 1.5rem;
                 font-weight: 700;
-                color: {COLORS['text_primary']};
+                color: {COLORS['accent_primary']};
             }}
-            .stat-change {{
-                color: {COLORS['success']};
-                font-size: 0.9rem;
+            .stat-desc {{
+                color: {COLORS['text_muted']};
+                font-size: 0.75rem;
+                margin-top: 2px;
             }}
-            .stat-value-sm {{
-                font-size: 1.2rem;
-                font-weight: 600;
-                color: {COLORS['success']};
-            }}
-            .allocation {{
+            .tech-stack {{
                 display: flex;
                 gap: 8px;
                 flex-wrap: wrap;
+                margin-top: 8px;
             }}
-            .allocation span {{
+            .tech-stack span {{
                 background: {COLORS['bg_tertiary']};
                 padding: 6px 12px;
                 border-radius: 20px;
-                font-size: 0.8rem;
+                font-size: 0.75rem;
                 color: {COLORS['text_primary']};
             }}
             .insight-box {{
                 background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(255,107,0,0.1));
                 border-radius: 12px;
                 padding: 16px;
+                margin-top: 16px;
             }}
             .insight-title {{
                 color: {COLORS['accent_primary']};
@@ -1386,31 +1387,33 @@ def render_portfolio_card():
         </style>
     </head>
     <body>
-        <div class="title">💼 Portfolio Overview</div>
+        <div class="title">⚡ Engine Performance</div>
 
         <div class="stat-block">
-            <div class="stat-label">Total Value</div>
-            <div class="stat-value">$124,532.00</div>
-            <div class="stat-change">+12.4% all time</div>
+            <div class="stat-label">Add Order Latency</div>
+            <div class="stat-value">16 ns</div>
+            <div class="stat-desc">31x faster than typical systems</div>
         </div>
 
         <div class="stat-block">
-            <div class="stat-label">Today's Change</div>
-            <div class="stat-value-sm">+$1,245.00 (+1.01%)</div>
+            <div class="stat-label">Peak Throughput</div>
+            <div class="stat-value">64M ops/sec</div>
+            <div class="stat-desc">Million operations per second</div>
         </div>
 
         <div class="stat-block">
-            <div class="stat-label" style="margin-bottom: 8px;">Asset Allocation</div>
-            <div class="allocation">
-                <span>BTC 45%</span>
-                <span>ETH 30%</span>
-                <span>Other 25%</span>
+            <div class="stat-label">Tech Stack</div>
+            <div class="tech-stack">
+                <span>C++20</span>
+                <span>Python</span>
+                <span>Numba JIT</span>
+                <span>pybind11</span>
             </div>
         </div>
 
         <div class="insight-box">
-            <div class="insight-title">🤖 AI Insight</div>
-            <div class="insight-text">Your portfolio is well-diversified. Consider rebalancing if BTC exceeds 50% allocation.</div>
+            <div class="insight-title">🔬 What You're Seeing</div>
+            <div class="insight-text">This dashboard visualizes a simulated order book. The C++ engine processes orders at nanosecond speeds - faster than light travels 5 meters!</div>
         </div>
     </body>
     </html>
@@ -1418,12 +1421,12 @@ def render_portfolio_card():
     components.html(html, height=380)
 
 
-def render_market_summary_card(book):
-    """Render market summary card using components.html for reliable rendering."""
+def render_orderbook_stats_card(book):
+    """Render order book statistics card using components.html for reliable rendering."""
     html = f"""
     <html>
     <head>
-        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
         <style>
             * {{ margin: 0; padding: 0; box-sizing: border-box; }}
             body {{
@@ -1442,7 +1445,7 @@ def render_market_summary_card(book):
                 margin-bottom: 20px;
             }}
             .stat-block {{
-                margin-bottom: 20px;
+                margin-bottom: 16px;
             }}
             .stat-label {{
                 color: {COLORS['text_secondary']};
@@ -1450,21 +1453,30 @@ def render_market_summary_card(book):
                 margin-bottom: 4px;
             }}
             .stat-value {{
-                font-size: 1.8rem;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 1.5rem;
                 font-weight: 700;
                 color: {COLORS['text_primary']};
             }}
             .stat-value-sm {{
-                font-size: 1.2rem;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 1.1rem;
                 font-weight: 600;
             }}
             .green {{ color: {COLORS['success']}; }}
+            .red {{ color: {COLORS['danger']}; }}
+            .orange {{ color: {COLORS['accent_primary']}; }}
             .white {{ color: {COLORS['text_primary']}; }}
+            .stat-desc {{
+                color: {COLORS['text_muted']};
+                font-size: 0.75rem;
+                margin-top: 2px;
+            }}
             .insight-box {{
                 background: {COLORS['bg_tertiary']};
                 border-radius: 12px;
                 padding: 16px;
-                margin-top: 20px;
+                margin-top: 16px;
             }}
             .insight-title {{
                 color: {COLORS['accent_primary']};
@@ -1480,31 +1492,35 @@ def render_market_summary_card(book):
         </style>
     </head>
     <body>
-        <div class="title">📊 Market Summary</div>
+        <div class="title">📊 Order Book Statistics</div>
 
         <div class="stat-block">
-            <div class="stat-label">Current Price</div>
+            <div class="stat-label">Simulated Mid Price</div>
             <div class="stat-value">${book['mid']:,.2f}</div>
+            <div class="stat-desc">Generated by market simulator</div>
         </div>
 
         <div class="stat-block">
-            <div class="stat-label">24h Change</div>
-            <div class="stat-value-sm green">+2.4%</div>
+            <div class="stat-label">Bid-Ask Spread</div>
+            <div class="stat-value-sm orange">${book['spread']:.2f}</div>
+            <div class="stat-desc">{book['spread']/book['mid']*100:.4f}% of mid price</div>
         </div>
 
         <div class="stat-block">
-            <div class="stat-label">Market Spread</div>
-            <div class="stat-value-sm white">${book['spread']:.2f}</div>
+            <div class="stat-label">Order Book Levels</div>
+            <div class="stat-value-sm white">12 per side</div>
+            <div class="stat-desc">Configurable depth</div>
         </div>
 
         <div class="stat-block">
-            <div class="stat-label">24h Volume</div>
-            <div class="stat-value-sm white">$2.4B</div>
+            <div class="stat-label">Update Frequency</div>
+            <div class="stat-value-sm green">Real-time</div>
+            <div class="stat-desc">Simulated tick data</div>
         </div>
 
         <div class="insight-box">
-            <div class="insight-title">💡 Insight</div>
-            <div class="insight-text">Market showing strong buyer interest with healthy volume. Consider reviewing your portfolio allocation.</div>
+            <div class="insight-title">📖 About This Data</div>
+            <div class="insight-text">This order book uses simulated market data to demonstrate the engine. In production, it would connect to real exchange feeds via FIX/ITCH protocols.</div>
         </div>
     </body>
     </html>
@@ -1560,8 +1576,8 @@ def section_overview(sim):
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
     with col2:
-        # Portfolio Quick Stats - using components.html for reliable rendering
-        render_portfolio_card()
+        # Engine Performance - using components.html for reliable rendering
+        render_engine_demo_card()
 
     # Second row
     col1, col2 = st.columns(2)
@@ -1598,11 +1614,11 @@ def section_overview(sim):
 
 
 def section_orderbook(sim):
-    """Market insights section."""
+    """Order book visualization section."""
     st.markdown(f"""
     <div style="font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 700; color: {COLORS['text_primary']}; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
-        Market Insights
-        <span style="background: {COLORS['accent_primary']}; color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Real-Time</span>
+        Order Book Visualization
+        <span style="background: {COLORS['accent_primary']}; color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Simulated</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1620,16 +1636,16 @@ def section_orderbook(sim):
         render_orderbook_table(book)
 
     with col2:
-        # Market Stats Card - using components.html for reliable rendering
-        render_market_summary_card(book)
+        # Order Book Stats - using components.html for reliable rendering
+        render_orderbook_stats_card(book)
 
 
 def section_performance(sim):
-    """Performance analytics."""
+    """Strategy backtest results."""
     st.markdown(f"""
     <div style="font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 700; color: {COLORS['text_primary']}; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
-        Your Investment Growth
-        <span style="background: {COLORS['success']}; color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Performance</span>
+        Strategy Backtest Results
+        <span style="background: {COLORS['success']}; color: #000; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Simulated</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1663,11 +1679,11 @@ def section_performance(sim):
 
 
 def section_system(sim):
-    """System metrics."""
+    """Engine performance benchmarks."""
     st.markdown(f"""
     <div style="font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 700; color: {COLORS['text_primary']}; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
-        Speed & Technology
-        <span style="background: {COLORS['info']}; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Under the Hood</span>
+        C++ Engine Benchmarks
+        <span style="background: {COLORS['info']}; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">Measured</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1707,34 +1723,34 @@ def section_system(sim):
 # WELCOME HERO SECTION
 # =============================================================================
 def render_welcome():
-    """Render welcome hero section for new users."""
+    """Render welcome hero section - technology focused."""
     from datetime import timezone
     utc_now = datetime.now(timezone.utc)
 
     st.markdown(f"""
     <div style="background: linear-gradient(135deg, {COLORS['bg_secondary']} 0%, {COLORS['bg_tertiary']} 100%); border-radius: 20px; padding: 40px; margin-bottom: 30px; border: 1px solid {COLORS['border']}; text-align: center;">
-        <div style="font-size: 3rem; margin-bottom: 16px;">📊</div>
+        <div style="font-size: 3rem; margin-bottom: 16px;">⚡</div>
         <h1 style="font-family: 'Orbitron', sans-serif; font-size: 2rem; margin-bottom: 12px; background: {COLORS['accent_gradient']}; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-            Welcome to Atlas
+            Low-Latency Order Book Engine
         </h1>
-        <p style="color: {COLORS['text_secondary']}; font-size: 1.1rem; max-width: 600px; margin: 0 auto 24px auto; line-height: 1.6;">
-            Your intelligent portfolio companion. Track your investments, analyze market insights, and let AI help you make smarter decisions.
+        <p style="color: {COLORS['text_secondary']}; font-size: 1.1rem; max-width: 700px; margin: 0 auto 24px auto; line-height: 1.6;">
+            A high-performance C++ order book engine with sub-microsecond latency. This dashboard demonstrates the engine's capabilities with simulated market data and ML-driven predictions.
         </p>
         <div style="color: {COLORS['text_muted']}; font-size: 0.85rem; margin-bottom: 24px;">
             🕐 {utc_now.strftime('%B %d, %Y • %H:%M:%S')} UTC
         </div>
         <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
             <div style="background: {COLORS['bg_primary']}; padding: 16px 24px; border-radius: 12px; border: 1px solid {COLORS['border']};">
-                <div style="color: {COLORS['accent_primary']}; font-size: 1.5rem; font-weight: 700;">Real-Time</div>
-                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">Live Data</div>
+                <div style="color: {COLORS['accent_primary']}; font-size: 1.5rem; font-weight: 700;">16 ns</div>
+                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">Add Order</div>
             </div>
             <div style="background: {COLORS['bg_primary']}; padding: 16px 24px; border-radius: 12px; border: 1px solid {COLORS['border']};">
-                <div style="color: {COLORS['success']}; font-size: 1.5rem; font-weight: 700;">94.2%</div>
-                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">AI Accuracy</div>
+                <div style="color: {COLORS['success']}; font-size: 1.5rem; font-weight: 700;">64M/s</div>
+                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">Throughput</div>
             </div>
             <div style="background: {COLORS['bg_primary']}; padding: 16px 24px; border-radius: 12px; border: 1px solid {COLORS['border']};">
-                <div style="color: {COLORS['info']}; font-size: 1.5rem; font-weight: 700;">Secure</div>
-                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">Your Data</div>
+                <div style="color: {COLORS['info']}; font-size: 1.5rem; font-weight: 700;">C++20</div>
+                <div style="color: {COLORS['text_muted']}; font-size: 0.8rem;">Modern C++</div>
             </div>
         </div>
     </div>
@@ -1770,29 +1786,29 @@ def main():
                 ATLAS
             </div>
             <div style="color: {COLORS['text_secondary']}; font-size: 0.8rem; margin-top: 4px;">
-                Smart Trading Platform
+                Low-Latency Order Book Engine
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-        # User-friendly navigation
+        # Tech-focused navigation
         page = st.radio(
             "Navigate",
-            ["🏠 Home", "📊 My Portfolio", "💡 Market Insights", "⚙️ Technology"],
+            ["🏠 Home", "📊 Order Book", "📈 Backtest Results", "⚙️ Benchmarks"],
             label_visibility="collapsed"
         )
 
         st.markdown("---")
 
-        # Live stats with friendly labels
+        # Live engine stats
         book = sim.get_orderbook()
         from datetime import timezone
         utc_now = datetime.now(timezone.utc)
 
         st.markdown(f"""
-        <div style="color: {COLORS['text_muted']}; font-size: 0.75rem; margin-bottom: 4px;">LIVE BITCOIN PRICE</div>
+        <div style="color: {COLORS['text_muted']}; font-size: 0.75rem; margin-bottom: 4px;">SIMULATED MID PRICE</div>
         """, unsafe_allow_html=True)
-        st.metric("", f"${book['mid']:,.2f}", f"{np.random.uniform(-2, 3):.2f}%")
+        st.metric("", f"${book['mid']:,.2f}", f"Spread: ${book['spread']:.2f}")
 
         st.markdown(f"""
         <div style="color: {COLORS['text_muted']}; font-size: 0.7rem; margin-top: 8px;">
@@ -1802,23 +1818,23 @@ def main():
 
         st.markdown("---")
 
-        # Friendly AI status
+        # Engine Status
         st.markdown(f"""
         <div style="background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(255,107,0,0.1)); border-radius: 12px; padding: 16px;">
             <div style="color: {COLORS['text_primary']}; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 1.2rem;">🤖</span> AI Assistant
+                <span style="font-size: 1.2rem;">⚡</span> Engine Status
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                 <span style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">Status</span>
-                <span style="color: {COLORS['success']}; font-size: 0.85rem;">● Active</span>
+                <span style="color: {COLORS['success']}; font-size: 0.85rem;">● Running</span>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                <span style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">Accuracy</span>
-                <span style="color: {COLORS['accent_primary']}; font-size: 0.85rem; font-weight: 600;">94.2%</span>
+                <span style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">Add Order</span>
+                <span style="color: {COLORS['accent_primary']}; font-size: 0.85rem; font-weight: 600;">16 ns</span>
             </div>
             <div style="display: flex; justify-content: space-between;">
-                <span style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">Updated</span>
-                <span style="color: {COLORS['text_muted']}; font-size: 0.85rem;">Just now</span>
+                <span style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">Throughput</span>
+                <span style="color: {COLORS['accent_primary']}; font-size: 0.85rem; font-weight: 600;">64M/s</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1876,24 +1892,24 @@ def main():
     if "Home" in page:
         render_welcome()
         section_overview(sim)
-    elif "My Portfolio" in page:
+    elif "Order Book" in page:
         render_info_card(
-            "Your Investment Portfolio",
-            "Track all your investments in one place. Monitor your returns, analyze performance over time, and make informed decisions based on real data.",
+            "Live Order Book Visualization",
+            "Watch the order book engine in action. This visualization shows simulated market data processed by our C++ engine at nanosecond speeds.",
             "📊"
         )
-        section_performance(sim)
-    elif "Market Insights" in page:
-        render_info_card(
-            "Real-Time Market Data",
-            "Stay informed with live market prices and depth analysis. Understanding market dynamics helps you make better investment decisions.",
-            "💡"
-        )
         section_orderbook(sim)
-    elif "Technology" in page:
+    elif "Backtest" in page:
         render_info_card(
-            "The Technology Behind Atlas",
-            "Atlas uses cutting-edge technology to process millions of data points per second. These benchmarks show how fast our system responds - measured in nanoseconds (billionths of a second)!",
+            "Strategy Backtest Results",
+            "Performance metrics from backtesting our ML-driven trading signals. These results demonstrate the predictive capabilities of the system.",
+            "📈"
+        )
+        section_performance(sim)
+    elif "Benchmarks" in page:
+        render_info_card(
+            "C++ Engine Performance Benchmarks",
+            "Raw performance metrics from the order book engine. All operations measured in nanoseconds (billionths of a second). Target: sub-microsecond latency for all critical paths.",
             "⚙️"
         )
         section_system(sim)
